@@ -134,14 +134,6 @@ typedef uint8_t modt_t;
 #endif /* ROUND5_CCA_PKE */
 
 // AVX2 implies CM_CACHE
-#ifdef AVX2
-#undef CM_CACHE
 #define CM_CACHE
-// Disable AVX2 if not supported by platform
-#ifndef __AVX2__
-#warning AVX2 not supported by platform
-#undef AVX2
-#endif
-#endif
 
 #endif /* _R5_PARAMETER_SETS_H_ */
