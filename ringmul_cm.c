@@ -7,8 +7,6 @@
 
 #include "ringmul.h"
 
-#if PARAMS_K == 1 && defined(CM_CACHE)
-
 #include "drbg.h"
 #include "little_endian.h"
 #include "probe_cm.h"
@@ -156,5 +154,3 @@ void ringmul_p(modp_t d[PARAMS_MU], modp_t a[PARAMS_ND], uint16_t idx[PARAMS_H /
     memcpy(d, tmp_d + 1, PARAMS_MU * sizeof (modp_t));
 #endif
 }
-
-#endif /* PARAMS_K == 1 && defined(CM_CACHE) */
