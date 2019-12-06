@@ -23,17 +23,6 @@ extern "C" {
 #include <libkeccak.a.headers/SP800-185.h>
 }
 
-#ifdef DOXYGEN
-/* Document SHAKE implementation option macro */
-/**
- * The default implementation of the SHAKE algorithm when combining the absorb
- * and squeeze steps (i.e. when using the functions `shake128()` or `shake256()`)
- * is to make use of OpenSSL (if OpenSSL >= 1.1.1 is found). To use the
- * `libkeccak` implementation in this case too, define `NO_OPENSSL_SHAKE`.
- */
-#define NO_OPENSSL_SHAKE
-#endif
-
 typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
 typedef cSHAKE_Instance cshake_ctx; /**< The cshake context (state) */
 
