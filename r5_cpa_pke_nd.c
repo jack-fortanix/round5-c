@@ -254,7 +254,7 @@ int r5_cpa_pke_encrypt(uint8_t *ct, const uint8_t *pk, const uint8_t *m, const u
     modq_t U_T[PARAMS_ND];
     modp_t B[PARAMS_ND];
     modp_t X[PARAMS_MU];
-    uint8_t m1[BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS)];
+    uint8_t m1[PARAMS_MUB_SIZE];
     modp_t t, tm;
 
     // unpack public key
@@ -264,7 +264,7 @@ int r5_cpa_pke_encrypt(uint8_t *ct, const uint8_t *pk, const uint8_t *m, const u
     create_A_random(A, pk);
 
     copy_u8(m1, m, PARAMS_KAPPA_BYTES); // add error correction code
-    zero_u8(m1 + PARAMS_KAPPA_BYTES, BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS) - PARAMS_KAPPA_BYTES);
+    zero_u8(m1 + PARAMS_KAPPA_BYTES, PARAMS_MUB_SIZE - PARAMS_KAPPA_BYTES);
 
     // Create R
     create_secret_vector(R_idx, rho);
@@ -275,7 +275,7 @@ int r5_cpa_pke_encrypt(uint8_t *ct, const uint8_t *pk, const uint8_t *m, const u
 #ifdef NIST_KAT_GENERATION
     print_hex("r5_cpa_pke_encrypt: rho", rho, PARAMS_KAPPA_BYTES, 1);
     print_hex("r5_cpa_pke_encrypt: sigma", pk, PARAMS_KAPPA_BYTES, 1);
-    print_hex("r5_cpa_pke_encrypt: m1", m1, BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS), 1);
+    print_hex("r5_cpa_pke_encrypt: m1", m1, PARAMS_MUB_SIZE, 1);
 #endif
 
     pack_q_p(ct, U_T, PARAMS_H2); // ct = U^T | v
@@ -306,7 +306,7 @@ int r5_cpa_pke_decrypt(uint8_t *m, const uint8_t *sk, const uint8_t *ct) {
     modp_t U_T[PARAMS_ND];
     modp_t v[PARAMS_MU];
     modp_t t, X_prime[PARAMS_MU];
-    uint8_t m1[BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS)] = { 0 };
+    uint8_t m1[PARAMS_MUB_SIZE] = { 0 };
 
     create_secret_vector(S_idx, sk);
 

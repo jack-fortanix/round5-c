@@ -7,7 +7,6 @@
 #define _R5_PARAMETER_SETS_H_
 
 #include "types.h"
-#include <stddef.h>
 #include "utils.h"
 
 // Parameter Set definitions
@@ -26,7 +25,6 @@ static const size_t PARAMS_B_BITS    = 1;
 static const size_t PARAMS_N_BAR     = 1;
 static const size_t PARAMS_M_BAR     = 1;
 static const size_t PARAMS_F         = 0;
-static const size_t PARAMS_XE        = 0;
 #define CRYPTO_ALGNAME     "R5ND_5PKE_0d"
 
 // appropriate types
@@ -41,12 +39,14 @@ static const size_t PARAMS_Q_MASK = (PARAMS_Q - 1);
 static const size_t PARAMS_P      = (1 << PARAMS_P_BITS);
 static const size_t PARAMS_P_MASK = (PARAMS_P - 1);
 static const size_t PARAMS_KAPPA  = (8 * PARAMS_KAPPA_BYTES);
-static const size_t PARAMS_MU     = CEIL_DIV((PARAMS_KAPPA + PARAMS_XE), PARAMS_B_BITS);
+static const size_t PARAMS_MU     = CEIL_DIV((PARAMS_KAPPA), PARAMS_B_BITS);
 static const size_t PARAMS_MUT_SIZE = BITS_TO_BYTES(PARAMS_MU * PARAMS_T_BITS);
 
 static const size_t PARAMS_RS_DIV = (0x10000 / PARAMS_ND);
 static const size_t PARAMS_RS_LIM = (PARAMS_ND * PARAMS_RS_DIV);
 static const size_t PARAMS_NDP_SIZE = BITS_TO_BYTES(PARAMS_ND * PARAMS_P_BITS);
+
+static const size_t PARAMS_MUB_SIZE = BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS);
 
 static const size_t PARAMS_TAU = 0;
 
