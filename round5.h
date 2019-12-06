@@ -13,7 +13,10 @@
 #define _API_H_
 
 #include "types.h"
-#include "r5_parameter_sets.h"
+
+static const size_t CRYPTO_SECRETKEYBYTES = 1413;
+static const size_t CRYPTO_PUBLICKEYBYTES = 1349;
+static const size_t CRYPTO_BYTES          = 1525;
 
     /**
      * Generates an ENCRYPT key pair. Uses the fixed parameter configuration.
