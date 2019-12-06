@@ -43,20 +43,6 @@ typedef struct drbg_ctx {
     ctx.index = SHAKE256_RATE
 
 /**
- * Initializes the deterministic random number generator with the specified
- * customization string.
- *
- * @param[in] seed              the seed to use for the deterministic number generator
- * @param[in] customization     the customization string to use
- * @param[in] customization_len the length of the customization string
- */
-#define drbg_init_customization(seed, customization, customization_len) \
-    drbg_ctx ctx; \
-    cshake256_init(&ctx.generator_ctx.cshake, customization, customization_len); \
-    cshake256_absorb(&ctx.generator_ctx.cshake, seed, PARAMS_KAPPA_BYTES); \
-    ctx.index = SHAKE256_RATE
-
-/**
  * Generates the next sequence of deterministic random bytes using the
  * (initial) seed as set with `drbg_init()`.
  *
@@ -85,38 +71,6 @@ typedef struct drbg_ctx {
  */
 #define drbg16(x) do { \
     drbg(&x, 2); \
-    x = (uint16_t) LITTLE_ENDIAN16(x); \
-} while (0)
-
-/**
- * Generates the next sequence of deterministic random bytes using the
- * (initial) seed as set with `drbg_init_customization()`.
- *
- * @param[out] x    destination of the random bytes
- * @param[in]  xlen the number of deterministic random bytes to generate
- * @return __0__ in case of success
- */
-#define drbg_customization(x, xlen) do { \
-    size_t i, j; \
-    i = ctx.index; \
-    for (j = 0; j < xlen; j++) { \
-        if (i >= SHAKE256_RATE) { \
-            cshake256_squeezeblocks(&ctx.generator_ctx.cshake, ctx.output, 1); \
-            i = 0; \
-        } \
-        ((uint8_t *) x)[j] = ctx.output[i++]; \
-    } \
-    ctx.index = i; \
-} while (0)
-
-/**
- * Generates the next deterministic random 16-bit integer using the
- * (initial) seed as set with `drbg_init_customization()`.
- *
- * @param[out] x    destination variable for the 16-bit integer
- */
-#define drbg16_customization(x) do { \
-    drbg_customization(&x, 2); \
     x = (uint16_t) LITTLE_ENDIAN16(x); \
 } while (0)
 
