@@ -6,8 +6,6 @@
 #include "r5_cpa_pke.h"
 #include "r5_parameter_sets.h"
 
-#if PARAMS_K == 1
-
 #include "r5_hash.h"
 #include "rng.h"
 #include "ringmul.h"
@@ -20,13 +18,6 @@
 // compress ND elements of q bits into p bits and pack into a byte string
 
 static void pack_q_p(uint8_t *pv, const modq_t *vq, const modq_t rounding_constant) {
-#if (PARAMS_P_BITS == 8)
-    size_t i;
-
-    for (i = 0; i < PARAMS_ND; i++) {
-        pv[i] = (uint8_t) (((vq[i] + rounding_constant) >> (PARAMS_Q_BITS - PARAMS_P_BITS)) & (PARAMS_P - 1));
-    }
-#else
     size_t i, j;
     modp_t t;
 
@@ -40,15 +31,11 @@ static void pack_q_p(uint8_t *pv, const modq_t *vq, const modq_t rounding_consta
         }
         j += PARAMS_P_BITS;
     }
-#endif
 }
 
 // unpack a byte string into ND elements of p bits
 
 static void unpack_p(modp_t *vp, const uint8_t *pv) {
-#if (PARAMS_P_BITS == 8)
-    memcpy(vp, pv, PARAMS_ND);
-#else
     size_t i, j;
     modp_t t;
 
@@ -61,7 +48,6 @@ static void unpack_p(modp_t *vp, const uint8_t *pv) {
         vp[i] = t & (PARAMS_P - 1);
         j += PARAMS_P_BITS;
     }
-#endif
 }
 
 // generate a keypair (sigma, B)
@@ -201,5 +187,3 @@ int r5_cpa_pke_decrypt(uint8_t *m, const uint8_t *sk, const uint8_t *ct) {
 
     return 0;
 }
-
-#endif /* PARAMS_K == 1 */
