@@ -19,7 +19,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <string.h>
+
 
 #include <libkeccak.a.headers/KeccakHash.h>
 #include <libkeccak.a.headers/SP800-185.h>

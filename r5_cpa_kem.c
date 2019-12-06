@@ -13,7 +13,7 @@
 #include "misc.h"
 
 #include <stdlib.h>
-#include <string.h>
+
 
 // CPA-KEM KeyGen()
 

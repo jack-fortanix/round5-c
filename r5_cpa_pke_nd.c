@@ -13,7 +13,7 @@
 #include "a_random.h"
 
 #include <stdio.h>
-#include <string.h>
+
 
 // compress ND elements of q bits into p bits and pack into a byte string
 

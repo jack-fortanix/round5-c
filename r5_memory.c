@@ -10,7 +10,7 @@
 #include "r5_memory.h"
 
 #include <stdint.h>
-#include <string.h>
+
 
 
 int constant_time_memcmp(const void *s1, const void *s2, size_t n) {

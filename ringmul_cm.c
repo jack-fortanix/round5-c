@@ -11,7 +11,7 @@
 #include "little_endian.h"
 #include "probe_cm.h"
 
-#include <string.h>
+
 
 // create a sparse ternary vector from a seed
 

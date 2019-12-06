@@ -38,7 +38,7 @@
 #include <assert.h>
 #include <openssl/opensslv.h>
 #include <openssl/evp.h>
-#include <string.h>
+
 
 /**
  * The DRBG context data structure.
