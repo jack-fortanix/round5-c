@@ -5,14 +5,6 @@
 #include "types.h"
 
 /**
- * Macro to round a floating point value to an integer value.
- *
- * @param[in] x the value to round
- * @return _round(x)_
- */
-#define ROUND(x) ((int)(x + 0.5))
-
-/**
  * Macro to calculate _ceil(a/b)_.
  *
  * Note: only for _a_ and _b > 0_!
@@ -37,21 +29,6 @@
      * @return ceil(log2(x))
      */
     uint32_t ceil_log2(uint32_t x);
-
-/**
- * Macro to switch the byte order of a 64-bit integer to/from little-endian.
- *
- * @param x the 64-bit integer
- */
-#define LITTLE_ENDIAN64(x) (x)
-#define LITTLE_ENDIAN32(x) (x)
-#define LITTLE_ENDIAN16(x) (x)
-
-    /*
-     * Note that on a little-endian machine, the compiler actually optimises
-     * below functions to to a memory copy already so we don't have to
-     * optimise the code ourselves.
-     */
 
     /**
      * Creates an 8 bit value from an array of 1 byte.
