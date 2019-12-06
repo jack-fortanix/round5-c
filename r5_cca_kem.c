@@ -5,15 +5,9 @@
 
 #include "r5_cpa_pke.h"
 #include "r5_parameter_sets.h"
-
-
-
-
-
 #include "r5_hash.h"
 #include "rng.h"
-#include "misc.h"
-#include "r5_memory.h"
+#include "io.h"
 
 // CCA-KEM KeyGen()
 

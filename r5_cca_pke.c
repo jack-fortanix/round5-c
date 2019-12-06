@@ -13,7 +13,6 @@
 #include "r5_cca_kem.h"
 #include "r5_dem.h"
 #include "r5_hash.h"
-#include "misc.h"
 #include "rng.h"
 
 

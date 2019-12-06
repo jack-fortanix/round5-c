@@ -11,8 +11,7 @@
 #define DRBG_H
 
 #include "r5_parameter_sets.h"
-#include "misc.h"
-#include "little_endian.h"
+#include "utils.h"
 #include "shake.h"
 #include "r5_hash.h"
 

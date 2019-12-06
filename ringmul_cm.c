@@ -8,7 +8,6 @@
 #include "ringmul.h"
 
 #include "drbg.h"
-#include "little_endian.h"
 #include "probe_cm.h"
 
 

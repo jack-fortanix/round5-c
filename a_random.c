@@ -8,9 +8,6 @@
  */
 
 #include "a_random.h"
-
-#include "misc.h"
-#include "little_endian.h"
 #include "drbg.h"
 
 void create_A_random(modq_t *A_random, const unsigned char *seed) {

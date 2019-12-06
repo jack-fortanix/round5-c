@@ -13,8 +13,6 @@
 #ifndef _SHAKE_H_
 #define _SHAKE_H_
 
-#include "misc.h"
-
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>

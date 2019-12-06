@@ -1,17 +1,4 @@
-/*
- * Copyright (c) 2018, Koninklijke Philips N.V.
- */
-
-/**
- * @file
- * Implementation of the memory handling functions.
- */
-
-#include "r5_memory.h"
-
-#include <stdint.h>
-
-
+#include "utils.h"
 
 int constant_time_memcmp(const void *s1, const void *s2, size_t n) {
 const uint8_t * a = (const uint8_t*)s1;
@@ -35,4 +22,19 @@ const uint8_t * s = (const uint8_t*)src;
     for (i = 0; i < n; ++i) {
         d[i] = (uint8_t) (d[i] ^ (flag & (d[i] ^ s[i])));
     }
+}
+
+uint32_t ceil_log2(uint32_t x) {
+    uint32_t bits = 0;
+    uint32_t ones = 0;
+
+    while (x >>= 1) {
+        ones += x & 0x1;
+        ++bits;
+    }
+    if (ones > 1) { /* ceil */
+        ++bits;
+    }
+
+    return bits;
 }

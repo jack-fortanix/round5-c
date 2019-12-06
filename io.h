@@ -13,32 +13,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-/**
- * Macro to round a floating point value to an integer value.
- *
- * @param[in] x the value to round
- * @return _round(x)_
- */
-#define ROUND(x) ((int)(x + 0.5))
-
-/**
- * Macro to calculate _ceil(a/b)_.
- *
- * Note: only for _a_ and _b > 0_!
- *
- * @param[in] a, b the values of _a_ and _b_
- * @return _ceil(a/b)_
- */
-#define CEIL_DIV(a,b) ((a+b-1)/b)
-
-/**
- * Macro to converts a number of bits into a number of bytes.
- *
- * @param[in] b the number of bits to convert to number of bytes
- * @return _ceil(b/8)_
- */
-#define BITS_TO_BYTES(b) (CEIL_DIV(b,8))
-
 /** Macro for printing errors. */
 
     /**
@@ -117,13 +91,5 @@
      * @param[in] nr_elements the number of elements of the vectors
      */
     void print_sage_s_vector_matrix(const char *var, const int16_t *matrix, const size_t nr_rows, const size_t nr_columns, const size_t nr_elements);
-
-    /**
-     * Computes the log2 of a number, rounding up if it's not exact.
-     *
-     * @param[in] x  the value to compute the log2 for
-     * @return ceil(log2(x))
-     */
-    uint32_t ceil_log2(uint32_t x);
 
 #endif /* MISC_H */

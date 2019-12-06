@@ -1,66 +1,51 @@
-/*
- * Copyright (c) 2018, Koninklijke Philips N.V.
- */
+#ifndef UTILS_H
+#define UTILS_H
+
+#include <stdlib.h>
+#include <stdint.h>
 
 /**
- * @file
- * Declaration of the little-endian byte array conversion functions.
+ * Macro to round a floating point value to an integer value.
+ *
+ * @param[in] x the value to round
+ * @return _round(x)_
  */
+#define ROUND(x) ((int)(x + 0.5))
 
-#ifndef LITTLE_ENDIAN_H
-#define LITTLE_ENDIAN_H
+/**
+ * Macro to calculate _ceil(a/b)_.
+ *
+ * Note: only for _a_ and _b > 0_!
+ *
+ * @param[in] a, b the values of _a_ and _b_
+ * @return _ceil(a/b)_
+ */
+#define CEIL_DIV(a,b) ((a+b-1)/b)
 
-#include <stdint.h>
+/**
+ * Macro to converts a number of bits into a number of bytes.
+ *
+ * @param[in] b the number of bits to convert to number of bytes
+ * @return _ceil(b/8)_
+ */
+#define BITS_TO_BYTES(b) (CEIL_DIV(b,8))
+
+    /**
+     * Computes the log2 of a number, rounding up if it's not exact.
+     *
+     * @param[in] x  the value to compute the log2 for
+     * @return ceil(log2(x))
+     */
+    uint32_t ceil_log2(uint32_t x);
 
 /**
  * Macro to switch the byte order of a 64-bit integer to/from little-endian.
  *
  * @param x the 64-bit integer
  */
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define LITTLE_ENDIAN64(x) (x)
-#else
-#define LITTLE_ENDIAN64(x) (             \
-    (((x) & 0xFF00000000000000U) >> 56) | \
-    (((x) & 0x00FF000000000000U) >> 40) | \
-    (((x) & 0x0000FF0000000000U) >> 24) | \
-    (((x) & 0x000000FF00000000U) >> 8)  | \
-    (((x) & 0x00000000FF000000U) << 8)  | \
-    (((x) & 0x0000000000FF0000U) << 24) | \
-    (((x) & 0x000000000000FF00U) << 40) | \
-    (((x) & 0x00000000000000FFU) << 56)   \
-)
-#endif
-
-/**
- * Macro to switch the byte order of a 32-bit integer to/from little-endian.
- *
- * @param x the 32-bit integer
- */
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define LITTLE_ENDIAN32(x) (x)
-#else
-#define LITTLE_ENDIAN32(x) (     \
-    (((x) & 0xFF000000U) >> 24) | \
-    (((x) & 0x00FF0000U) >> 8)  | \
-    (((x) & 0x0000FF00U) << 8)  | \
-    (((x) & 0x000000FFU) << 24)   \
-)
-#endif
-
-/**
- * Macro to switch the byte order of a 16-bit integer to/from little-endian.
- *
- * @param x the 16-bit integer
- */
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #define LITTLE_ENDIAN16(x) (x)
-#else
-#define LITTLE_ENDIAN16(x) ( \
-    (((x) & 0xFF00U) >> 8) |  \
-    (((x) & 0x00FFU) << 8)    \
-)
-#endif
 
     /*
      * Note that on a little-endian machine, the compiler actually optimises
@@ -177,4 +162,26 @@
         x[7] = (unsigned char) (u >> 56);
     }
 
-#endif /* LITTLE_ENDIAN_H */
+    /**
+     * Constant time memory comparison function. Use to replace `memcmp()` when
+     * comparing security critical data.
+     *
+     * @param s1 the byte string to compare to
+     * @param s2 the byte string to compare
+     * @param n the number of bytes to compare
+     * @return 0 if all size bytes are equal, non-zero otherwise
+     */
+    int constant_time_memcmp(const void *s1, const void *s2, size_t n);
+
+    /**
+     * Conditionally copies the data from the source to the destination in
+     * constant time.
+     *
+     * @param dst the destination of the copy
+     * @param src the source of the copy
+     * @param n the number of bytes to copy
+     * @param flag indicating whether or not the copy should be performed
+     */
+    void conditional_constant_time_memcpy(void *  dst, const void *  src, size_t n, uint8_t flag);
+
+#endif

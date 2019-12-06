@@ -10,8 +10,6 @@
 
 #include "shake.h"
 
-#include "misc.h"
-
 /* Use OpenSSL's Shake unless disabled/not supported */
 #undef USE_OPENSSL_SHAKE
 #ifndef NO_OPENSSL_SHAKE

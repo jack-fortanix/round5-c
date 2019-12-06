@@ -18,8 +18,6 @@
 
 #include "r5_hash.h"
 #include "rng.h"
-#include "misc.h"
-#include "r5_memory.h"
 
 /*******************************************************************************
  * Public functions

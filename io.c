@@ -7,7 +7,7 @@
  * Implementation of the miscellaneous functions.
  */
 
-#include "misc.h"
+#include "io.h"
 #include <stdio.h>
 
 
@@ -215,17 +215,3 @@ void print_sage_s_vector_matrix(const char *var, const int16_t *matrix, const si
     }
 }
 
-uint32_t ceil_log2(uint32_t x) {
-    uint32_t bits = 0;
-    uint32_t ones = 0;
-
-    while (x >>= 1) {
-        ones += x & 0x1;
-        ++bits;
-    }
-    if (ones > 1) { /* ceil */
-        ++bits;
-    }
-
-    return bits;
-}

@@ -9,8 +9,8 @@
 #include "r5_hash.h"
 #include "rng.h"
 #include "ringmul.h"
-#include "misc.h"
 #include "a_random.h"
+#include "io.h"
 
 #include <stdio.h>
 
