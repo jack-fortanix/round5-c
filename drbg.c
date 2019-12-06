@@ -24,69 +24,11 @@
 int drbg_sampler16_2_once(uint16_t *x, const size_t xlen, const void *seed) {
     /* Since without customization, SHAKE == CSHAKE, we use SHAKE here directly. */
 
-#ifdef USE_AES_DRBG
-    uint8_t key[32];
-
-    EVP_CIPHER_CTX * aes_ctx;
-    if (!(aes_ctx = EVP_CIPHER_CTX_new())) {
-        abort();
-    }
-
-    int res;
-    assert(PARAMS_KAPPA_BYTES == 16 || PARAMS_KAPPA_BYTES == 24 || PARAMS_KAPPA_BYTES == 32);
-    hash(key, PARAMS_KAPPA_BYTES, seed, PARAMS_KAPPA_BYTES, (uint8_t) PARAMS_KAPPA_BYTES);
-    switch (PARAMS_KAPPA_BYTES) {
-        case 16:
-            res = EVP_EncryptInit_ex(aes_ctx, EVP_aes_128_ctr(), NULL, key, NULL);
-            break;
-        case 24:
-            res = EVP_EncryptInit_ex(aes_ctx, EVP_aes_192_ctr(), NULL, key, NULL);
-            break;
-        case 32:
-            res = EVP_EncryptInit_ex(aes_ctx, EVP_aes_256_ctr(), NULL, key, NULL);
-            break;
-    }
-    if (res != 1) {
-        abort();
-    }
-
-    size_t nr_full_blocks = (xlen * sizeof (uint16_t)) >> 4;
-    int len;
-    if (nr_full_blocks) {
-        uint8_t *input = calloc(nr_full_blocks, 16);
-        if (EVP_EncryptUpdate(aes_ctx, (uint8_t *) x, &len, input, (int) (nr_full_blocks << 4)) != 1) {
-            abort();
-        }
-        free(input);
-    }
-    if ((xlen * sizeof (uint16_t)) & 15) {
-        uint8_t final_block_output[16];
-        uint8_t final_input[16] = {0};
-        u64_to_le(final_input, (uint64_t) (nr_full_blocks + 1));
-        if (EVP_EncryptUpdate(aes_ctx, final_block_output, &len, final_input, 16) != 1) {
-            abort();
-        }
-        memcpy(((uint8_t *) x) + (nr_full_blocks << 4), final_block_output, (xlen * sizeof (uint16_t)) & 15);
-    }
-
-    EVP_CIPHER_CTX_free(aes_ctx);
-
-#else
-
     if (PARAMS_KAPPA_BYTES > 16) {
         shake256((uint8_t *) x, xlen * sizeof (uint16_t), (const uint8_t *) seed, PARAMS_KAPPA_BYTES);
     } else {
         shake128((uint8_t *) x, xlen * sizeof (uint16_t), (const uint8_t *) seed, PARAMS_KAPPA_BYTES);
     }
-
-#endif
-
-#if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
-    /* Flip byte order if necessary */
-    for (size_t i = 0; i < xlen; ++i) {
-        x[i] = (uint16_t) LITTLE_ENDIAN16(x[i]);
-    }
-#endif
 
     return 0;
 }
