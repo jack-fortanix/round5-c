@@ -21,7 +21,7 @@ int r5_cca_pke_keygen(uint8_t *pk, uint8_t *sk) {
     return r5_cca_kem_keygen(pk, sk);
 }
 
-int r5_cca_pke_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk) {
+int r5_cca_pke_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk, const uint8_t coins[32]) {
     int result = -1;
     const size_t c1_len = PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES;
     uint8_t c1[PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES];
@@ -29,7 +29,7 @@ int r5_cca_pke_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size
     uint8_t k[PARAMS_KAPPA_BYTES];
 
     /* Determine c1 and k */
-    r5_cca_kem_encapsulate(c1, k, pk);
+    r5_cca_kem_encapsulate(c1, k, pk, coins);
 
     /* Copy c1 into first part of ct */
     copy_u8(ct, c1, c1_len);

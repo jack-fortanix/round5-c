@@ -6,7 +6,6 @@
 #include "r5_cpa_pke.h"
 #include "r5_parameter_sets.h"
 #include "shake.h"
-#include "rng.h"
 #include "io.h"
 
 // Size of the vector to pass to probe_cm
@@ -220,12 +219,12 @@ static void unpack_p(modp_t *vp, const uint8_t *pv) {
 
 // generate a keypair (sigma, B)
 
-int r5_cpa_pke_keygen(uint8_t *pk, uint8_t *sk) {
+int r5_cpa_pke_keygen(uint8_t *pk, uint8_t *sk, const uint8_t seed[64]) {
     modq_t A[PARAMS_ND];
     modq_t B[PARAMS_ND];
     uint16_t S_idx[PARAMS_H / 2][2];
 
-    randombytes(pk, PARAMS_KAPPA_BYTES); // sigma = seed of A
+    copy_u8(pk, seed, 32); // sigma = seed of A
 #ifdef NIST_KAT_GENERATION
     print_hex("r5_cpa_pke_keygen: sigma", pk, PARAMS_KAPPA_BYTES, 1);
 #endif
@@ -233,7 +232,7 @@ int r5_cpa_pke_keygen(uint8_t *pk, uint8_t *sk) {
     // A from sigma
     create_A_random(A, pk);
 
-    randombytes(sk, PARAMS_KAPPA_BYTES); // secret key -- Random S
+    copy_u8(sk, seed + 32, 32); // secret key -- Random S
     create_secret_vector(S_idx, sk);
 
     ringmul_q(B, A, S_idx); // B = A * S

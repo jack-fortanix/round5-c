@@ -8,7 +8,7 @@
 
 #include "types.h"
 
-int r5_cpa_pke_keygen(uint8_t *pk, uint8_t *sk);
+int r5_cpa_pke_keygen(uint8_t *pk, uint8_t *sk, const uint8_t seed[64]);
 
 int r5_cpa_pke_encrypt(uint8_t *ct, const uint8_t *pk, const uint8_t *m, const uint8_t *rho);
 

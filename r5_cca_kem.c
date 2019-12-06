@@ -14,8 +14,13 @@
 int r5_cca_kem_keygen(uint8_t *pk, uint8_t *sk) {
     uint8_t y[PARAMS_KAPPA_BYTES];
 
+    uint8_t seed[64] = { 0 };
+
+    randombytes(seed, 32);
+    randombytes(seed+32, 32);
+
     /* Generate the base key pair */
-    r5_cpa_pke_keygen(pk, sk);
+    r5_cpa_pke_keygen(pk, sk, seed);
 
     /* Append y and pk to sk */
     randombytes(y, PARAMS_KAPPA_BYTES);
@@ -27,27 +32,24 @@ int r5_cca_kem_keygen(uint8_t *pk, uint8_t *sk) {
 
 // CCA-KEM Encaps()
 
-int r5_cca_kem_encapsulate(uint8_t *ct, uint8_t *k, const uint8_t *pk) {
+int r5_cca_kem_encapsulate(uint8_t *ct, uint8_t *k, const uint8_t *pk, const uint8_t coins[32]) {
     uint8_t hash_in[PARAMS_KAPPA_BYTES + (PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES > PARAMS_PK_SIZE ? PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES : PARAMS_PK_SIZE)];
-    uint8_t m[PARAMS_KAPPA_BYTES];
     uint8_t L_g_rho[3][PARAMS_KAPPA_BYTES];
 
-    randombytes(m, PARAMS_KAPPA_BYTES); // generate random m
-
-    copy_u8(hash_in, m, PARAMS_KAPPA_BYTES); // G: (l | g | rho) = h(m | pk);
+    copy_u8(hash_in, coins, PARAMS_KAPPA_BYTES); // G: (l | g | rho) = h(coins | pk);
     copy_u8(hash_in + PARAMS_KAPPA_BYTES, pk, PARAMS_PK_SIZE);
 
     shake256((uint8_t *) L_g_rho, 3 * PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE);
 
 #ifdef NIST_KAT_GENERATION
-    print_hex("r5_cca_kem_encapsulate: m", m, PARAMS_KAPPA_BYTES, 1);
+    print_hex("r5_cca_kem_encapsulate: m", coins, PARAMS_KAPPA_BYTES, 1);
     print_hex("r5_cca_kem_encapsulate: L", L_g_rho[0], PARAMS_KAPPA_BYTES, 1);
     print_hex("r5_cca_kem_encapsulate: g", L_g_rho[1], PARAMS_KAPPA_BYTES, 1);
     print_hex("r5_cca_kem_encapsulate: rho", L_g_rho[2], PARAMS_KAPPA_BYTES, 1);
 #endif
 
     /* Encrypt  */
-    r5_cpa_pke_encrypt(ct, pk, m, L_g_rho[2]); // m: ct = (U,v)
+    r5_cpa_pke_encrypt(ct, pk, coins, L_g_rho[2]); // m: ct = (U,v)
 
     /* Append g: ct = (U,v,g) */
     copy_u8(ct + PARAMS_CT_SIZE, L_g_rho[1], PARAMS_KAPPA_BYTES);

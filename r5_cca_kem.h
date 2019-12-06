@@ -23,7 +23,7 @@
      * @param[in]  pk     public key with which the message is encapsulated
      * @return __0__ in case of success
      */
-    int r5_cca_kem_encapsulate(uint8_t *ct, uint8_t *k, const uint8_t *pk);
+int r5_cca_kem_encapsulate(uint8_t *ct, uint8_t *k, const uint8_t *pk, const uint8_t coins[32]);
 
     /**
      * CCA KEM de-capsulate. Uses the parameters as specified.

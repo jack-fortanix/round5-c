@@ -32,7 +32,7 @@
      * @param[in]  pk     the public key to use for the encryption
      * @return __0__ in case of success
      */
-    int r5_cca_pke_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk);
+    int r5_cca_pke_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk, const uint8_t coins[32]);
 
     /**
      * Decrypts a message. Uses the parameters as specified.
