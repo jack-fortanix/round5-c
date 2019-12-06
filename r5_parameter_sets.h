@@ -48,19 +48,10 @@ typedef uint8_t modt_t;
 #define PARAMS_RS_LIM   (PARAMS_ND * PARAMS_RS_DIV)
 #define PARAMS_NDP_SIZE BITS_TO_BYTES(PARAMS_ND * PARAMS_P_BITS)
 
-// Definition of TAU parameter, defaults to 0 unless otherwise defined and non-ring
-#if PARAMS_K == 1 || !defined(ROUND5_API_TAU)
-#undef ROUND5_API_TAU
-#define ROUND5_API_TAU 0
-#endif
-#define PARAMS_TAU      ROUND5_API_TAU
+static const size_t PARAMS_TAU = 0;
 
 // Rounding constants
-#if ((PARAMS_Q_BITS - PARAMS_P_BITS + PARAMS_T_BITS) < PARAMS_P_BITS)
-#define PARAMS_Z_BITS   PARAMS_P_BITS
-#else
 #define PARAMS_Z_BITS   (PARAMS_Q_BITS - PARAMS_P_BITS + PARAMS_T_BITS)
-#endif
 #define PARAMS_H1       (1 << (PARAMS_Q_BITS - PARAMS_P_BITS - 1))
 #define PARAMS_H2       (1 << (PARAMS_Q_BITS - PARAMS_Z_BITS - 1))
 #define PARAMS_H3       ((1 << (PARAMS_P_BITS - PARAMS_T_BITS - 1)) + (1 << (PARAMS_P_BITS - PARAMS_B_BITS - 1)) - (1 << (PARAMS_Q_BITS - PARAMS_Z_BITS - 1)))
