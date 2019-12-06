@@ -326,23 +326,4 @@ typedef struct drbg_ctx {
      */
     int drbg_sampler16_2_once(uint16_t *x, const size_t xlen, const void *seed);
 
-    /**
-     * Generates a sequence of deterministic random numbers using the given seed
-     * and customization string.
-     * Can only be used to generate a single sequence of random numbers from the
-     * given seed.
-     *
-     * Use this function to generate a fixed number of deterministic numbers
-     * from a seed. It is faster than calling `drbg_init()` and
-     * `drbg16_customization()` separately.
-     *
-     * @param[out] x                 destination of the random numbers
-     * @param[in]  xlen              the number of deterministic random numbers to generate
-     * @param[in]  seed              the seed to use for the deterministic number generator
-     * @param[in]  customization     the customization string to use
-     * @param[in]  customization_len the length of the customization string
-     * @return __0__ in case of success
-     */
-    int drbg_sampler16_2_once_customization(uint16_t *x, const size_t xlen, const void *seed, const void *customization, const size_t customization_len);
-
 #endif /* DRBG_H */
