@@ -19,8 +19,8 @@ int r5_cca_kem_keygen(uint8_t *pk, uint8_t *sk) {
 
     /* Append y and pk to sk */
     randombytes(y, PARAMS_KAPPA_BYTES);
-    memcpy(sk + PARAMS_KAPPA_BYTES, y, PARAMS_KAPPA_BYTES);
-    memcpy(sk + PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES, pk, PARAMS_PK_SIZE);
+    copy_u8(sk + PARAMS_KAPPA_BYTES, y, PARAMS_KAPPA_BYTES);
+    copy_u8(sk + PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES, pk, PARAMS_PK_SIZE);
 
     return 0;
 }
@@ -34,8 +34,8 @@ int r5_cca_kem_encapsulate(uint8_t *ct, uint8_t *k, const uint8_t *pk) {
 
     randombytes(m, PARAMS_KAPPA_BYTES); // generate random m
 
-    memcpy(hash_in, m, PARAMS_KAPPA_BYTES); // G: (l | g | rho) = h(m | pk);
-    memcpy(hash_in + PARAMS_KAPPA_BYTES, pk, PARAMS_PK_SIZE);
+    copy_u8(hash_in, m, PARAMS_KAPPA_BYTES); // G: (l | g | rho) = h(m | pk);
+    copy_u8(hash_in + PARAMS_KAPPA_BYTES, pk, PARAMS_PK_SIZE);
     hash((uint8_t *) L_g_rho, 3 * PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE, PARAMS_KAPPA_BYTES);
 
 #ifdef NIST_KAT_GENERATION
@@ -49,11 +49,11 @@ int r5_cca_kem_encapsulate(uint8_t *ct, uint8_t *k, const uint8_t *pk) {
     r5_cpa_pke_encrypt(ct, pk, m, L_g_rho[2]); // m: ct = (U,v)
 
     /* Append g: ct = (U,v,g) */
-    memcpy(ct + PARAMS_CT_SIZE, L_g_rho[1], PARAMS_KAPPA_BYTES);
+    copy_u8(ct + PARAMS_CT_SIZE, L_g_rho[1], PARAMS_KAPPA_BYTES);
 
     /* k = H(L, ct) */
-    memcpy(hash_in, L_g_rho[0], PARAMS_KAPPA_BYTES);
-    memcpy(hash_in + PARAMS_KAPPA_BYTES,
+    copy_u8(hash_in, L_g_rho[0], PARAMS_KAPPA_BYTES);
+    copy_u8(hash_in + PARAMS_KAPPA_BYTES,
             ct, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
     hash(k, PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES);
 
@@ -83,8 +83,8 @@ int r5_cca_kem_decapsulate(uint8_t *k, const uint8_t *ct, const uint8_t *sk) {
 
     r5_cpa_pke_decrypt(m_prime, sk, ct); // r5_cpa_pke_decrypt m'
 
-    memcpy(hash_in, m_prime, PARAMS_KAPPA_BYTES);
-    memcpy(hash_in + PARAMS_KAPPA_BYTES, // (L | g | rho) = h(m | pk)
+    copy_u8(hash_in, m_prime, PARAMS_KAPPA_BYTES);
+    copy_u8(hash_in + PARAMS_KAPPA_BYTES, // (L | g | rho) = h(m | pk)
             sk + PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES, PARAMS_PK_SIZE);
     hash((uint8_t *) L_g_rho_prime, 3 * PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE, PARAMS_KAPPA_BYTES);
 
@@ -99,16 +99,16 @@ int r5_cca_kem_decapsulate(uint8_t *k, const uint8_t *ct, const uint8_t *sk) {
     r5_cpa_pke_encrypt(ct_prime, sk + PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES, m_prime, L_g_rho_prime[2]);
 
     // ct' = (U',v',g')
-    memcpy(ct_prime + PARAMS_CT_SIZE, L_g_rho_prime[1], PARAMS_KAPPA_BYTES);
+    copy_u8(ct_prime + PARAMS_CT_SIZE, L_g_rho_prime[1], PARAMS_KAPPA_BYTES);
 
     // k = H(L', ct')
-    memcpy(hash_in, L_g_rho_prime[0], PARAMS_KAPPA_BYTES);
+    copy_u8(hash_in, L_g_rho_prime[0], PARAMS_KAPPA_BYTES);
     // verification ok ?
     fail = (uint8_t) verify(ct, ct_prime, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
     // k = H(y, ct') depending on fail state
     conditional_constant_time_memcpy(hash_in, sk + PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES, fail);
 
-    memcpy(hash_in + PARAMS_KAPPA_BYTES, ct_prime, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
+    copy_u8(hash_in + PARAMS_KAPPA_BYTES, ct_prime, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
     hash(k, PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES);
 
     return 0;

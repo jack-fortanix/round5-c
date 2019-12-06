@@ -1,5 +1,28 @@
 #include "utils.h"
 
+void copy_u8(uint8_t* out, const uint8_t* in, size_t len)
+   {
+   for(size_t i = 0; i != len; ++i)
+      out[i] = in[i];
+   }
+void zero_u8(uint8_t* out, size_t len)
+   {
+   for(size_t i = 0; i != len; ++i)
+      out[i] = 0;
+   }
+
+void copy_u16(uint16_t* out, const uint16_t* in, size_t len)
+   {
+   for(size_t i = 0; i != len; ++i)
+      out[i] = in[i];
+   }
+
+void zero_u16(uint16_t* out, size_t len)
+   {
+   for(size_t i = 0; i != len; ++i)
+      out[i] = 0;
+   }
+
 int constant_time_memcmp(const void *s1, const void *s2, size_t n) {
 const uint8_t * a = (const uint8_t*)s1;
 const uint8_t * b = (const uint8_t*)s2;

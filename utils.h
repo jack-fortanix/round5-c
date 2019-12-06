@@ -184,4 +184,10 @@
      */
     void conditional_constant_time_memcpy(void *  dst, const void *  src, size_t n, uint8_t flag);
 
+    void copy_u8(uint8_t* out, const uint8_t* in, size_t len);
+    void copy_u16(uint16_t* out, const uint16_t* in, size_t len);
+
+void zero_u8(uint8_t* out, size_t len);
+void zero_u16(uint16_t* out, size_t len);
+
 #endif

@@ -58,7 +58,7 @@ void ringmul_q(modq_t d[PARAMS_ND], modq_t a[PARAMS_ND], uint16_t idx[PARAMS_H /
     p[1] = a[PARAMS_ND - 1];
 
     // Initialize result
-    memset(d, 0, PARAMS_ND * sizeof (modq_t));
+    zero_u16(d, PARAMS_ND);
 
     for (i = 0; i < PARAMS_H / 2; i++) {
         // Modified to always scan the same ranges
@@ -107,10 +107,8 @@ void ringmul_p(modp_t d[PARAMS_MU], modp_t a[PARAMS_ND], uint16_t idx[PARAMS_H /
     }
     p[1] = a[PARAMS_ND - 1];
 
-    modp_t tmp_d[PARAMS_ND];
-
     // Initialize result
-    memset(tmp_d, 0, PARAMS_ND * sizeof (modp_t));
+    modp_t tmp_d[PARAMS_ND] = { 0 };
 
     for (i = 0; i < PARAMS_H / 2; i++) {
         // Modified to always scan the same ranges
@@ -144,5 +142,5 @@ void ringmul_p(modp_t d[PARAMS_MU], modp_t a[PARAMS_ND], uint16_t idx[PARAMS_H /
         tmp_d[i] = (modp_t) (tmp_d[i - 1] - tmp_d[i]);
     }
     // Copy result
-    memcpy(d, tmp_d, PARAMS_MU * sizeof (modp_t));
+    copy_u16(d, tmp_d, PARAMS_MU);
 }

@@ -67,7 +67,7 @@ int round5_dem(uint8_t *c2, size_t *c2_len, const uint8_t *key, const uint8_t *m
     }
 
     /* Append tag and IV */
-    memcpy(c2 + c2length, tag, 16);
+    copy_u8(c2 + c2length, tag, 16);
     c2length += 16;
 
     /* Set total length */
@@ -108,7 +108,7 @@ int round5_dem_inverse(uint8_t *m, size_t *m_len, const uint8_t *key, const uint
     hash(final_key_iv, (size_t) (PARAMS_KAPPA_BYTES + 12), key, PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES);
 
     /* Get tag */
-    memcpy(tag, c2 + c2_len_no_tag, 16);
+    copy_u8(tag, c2 + c2_len_no_tag, 16);
 
     /* Initialise AES GCM */
     switch (PARAMS_KAPPA_BYTES) {
@@ -140,7 +140,7 @@ int round5_dem_inverse(uint8_t *m, size_t *m_len, const uint8_t *key, const uint
     }
     if (tmp_m != m) {
         /* Copy temporary message to result message, free temp message buffer */
-        memcpy(m, tmp_m, (size_t) len);
+        copy_u8(m, tmp_m, (size_t) len);
         free(tmp_m);
     }
     m_length = len;

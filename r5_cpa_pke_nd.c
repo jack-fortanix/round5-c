@@ -24,7 +24,7 @@ static void pack_q_p(uint8_t *pv, const modq_t *vq, const modq_t rounding_consta
     size_t i, j;
     modp_t t;
 
-    memset(pv, 0, PARAMS_NDP_SIZE);
+    zero_u8(pv, PARAMS_NDP_SIZE);
     j = 0;
     for (i = 0; i < PARAMS_ND; i++) {
         t = ((vq[i] + rounding_constant) >> (PARAMS_Q_BITS - PARAMS_P_BITS)) & (PARAMS_P - 1);
@@ -96,8 +96,8 @@ int r5_cpa_pke_encrypt(uint8_t *ct, const uint8_t *pk, const uint8_t *m, const u
     // A from sigma
     create_A_random(A, pk);
 
-    memcpy(m1, m, PARAMS_KAPPA_BYTES); // add error correction code
-    memset(m1 + PARAMS_KAPPA_BYTES, 0, BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS) - PARAMS_KAPPA_BYTES);
+    copy_u8(m1, m, PARAMS_KAPPA_BYTES); // add error correction code
+    zero_u8(m1 + PARAMS_KAPPA_BYTES, BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS) - PARAMS_KAPPA_BYTES);
 
     // Create R
     create_secret_vector(R_idx, rho);
@@ -113,7 +113,7 @@ int r5_cpa_pke_encrypt(uint8_t *ct, const uint8_t *pk, const uint8_t *m, const u
 
     pack_q_p(ct, U_T, PARAMS_H2); // ct = U^T | v
 
-    memset(ct + PARAMS_NDP_SIZE, 0, PARAMS_MUT_SIZE);
+    zero_u8(ct + PARAMS_NDP_SIZE, PARAMS_MUT_SIZE);
     j = 8 * PARAMS_NDP_SIZE;
 
     for (i = 0; i < PARAMS_MU; i++) { // compute, pack v
@@ -145,7 +145,7 @@ int r5_cpa_pke_decrypt(uint8_t *m, const uint8_t *sk, const uint8_t *ct) {
     modp_t U_T[PARAMS_ND];
     modp_t v[PARAMS_MU];
     modp_t t, X_prime[PARAMS_MU];
-    uint8_t m1[BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS)];
+    uint8_t m1[BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS)] = { 0 };
 
     create_secret_vector(S_idx, sk);
 
@@ -167,7 +167,6 @@ int r5_cpa_pke_decrypt(uint8_t *m, const uint8_t *sk, const uint8_t *ct) {
 
     // X' = v - X', compressed to 1 bit
     modp_t x_p;
-    memset(m1, 0, sizeof (m1));
     for (i = 0; i < PARAMS_MU; i++) {
         // v - X' as mod p value (to be able to perform the rounding!)
         x_p = (modp_t) ((v[i] << (PARAMS_P_BITS - PARAMS_T_BITS)) - X_prime[i]);
@@ -182,7 +181,7 @@ int r5_cpa_pke_decrypt(uint8_t *m, const uint8_t *sk, const uint8_t *ct) {
     }
 
 
-    memcpy(m, m1, PARAMS_KAPPA_BYTES);
+    copy_u8(m, m1, PARAMS_KAPPA_BYTES);
 
 #ifdef NIST_KAT_GENERATION
     print_hex("r5_cpa_pke_decrypt: m", m, PARAMS_KAPPA_BYTES, 1);

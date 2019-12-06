@@ -6,7 +6,7 @@
 //
 
 #include "rng.h"
-
+#include "utils.h"
 
 #define RNG_SUCCESS      0
 #define RNG_BAD_MAXLEN  -1
@@ -29,7 +29,6 @@ AES256_CTR_DRBG_Update(uint8_t *provided_data, uint8_t *Key, uint8_t *V);
 //  Copyright © 2017 Bassham, Lawrence E (Fed). All rights reserved.
 //
 
-#include <string.h>
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
@@ -76,12 +75,12 @@ randombytes_init(uint8_t *entropy_input,
         int security_strength) {
     uint8_t seed_material[48];
 
-    memcpy(seed_material, entropy_input, 48);
+    copy_u8(seed_material, entropy_input, 48);
     if (personalization_string)
         for (int i = 0; i < 48; i++)
             seed_material[i] ^= personalization_string[i];
-    memset(DRBG_ctx.Key, 0x00, 32);
-    memset(DRBG_ctx.V, 0x00, 16);
+    zero_u8(DRBG_ctx.Key, 32);
+    zero_u8(DRBG_ctx.V, 16);
     AES256_CTR_DRBG_Update(seed_material, DRBG_ctx.Key, DRBG_ctx.V);
     DRBG_ctx.reseed_counter = 1;
 }
@@ -103,11 +102,11 @@ randombytes(uint8_t *x, size_t xlen) {
         }
         AES256_ECB(DRBG_ctx.Key, DRBG_ctx.V, block);
         if (xlen > 15) {
-            memcpy(x + i, block, 16);
+            copy_u8(x + i, block, 16);
             i += 16;
             xlen -= 16;
         } else {
-            memcpy(x + i, block, xlen);
+            copy_u8(x + i, block, xlen);
             xlen = 0;
         }
     }
@@ -139,6 +138,6 @@ AES256_CTR_DRBG_Update(uint8_t *provided_data,
     if (provided_data != NULL)
         for (int i = 0; i < 48; i++)
             temp[i] ^= provided_data[i];
-    memcpy(Key, temp, 32);
-    memcpy(V, temp + 32, 16);
+    copy_u8(Key, temp, 32);
+    copy_u8(V, temp + 32, 16);
 }

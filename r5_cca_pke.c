@@ -12,12 +12,6 @@
 #include "r5_parameter_sets.h"
 #include "r5_cca_kem.h"
 #include "r5_dem.h"
-#include "r5_hash.h"
-#include "rng.h"
-
-
-
-
 
 /*******************************************************************************
  * Public functions
@@ -38,7 +32,7 @@ int r5_cca_pke_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size
     r5_cca_kem_encapsulate(c1, k, pk);
 
     /* Copy c1 into first part of ct */
-    memcpy(ct, c1, c1_len);
+    copy_u8(ct, c1, c1_len);
     *ct_len = c1_len;
 
     /* Apply DEM to get second part of ct */
