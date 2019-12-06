@@ -62,10 +62,6 @@
 )
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     /*
      * Note that on a little-endian machine, the compiler actually optimises
      * below functions to to a memory copy already so we don't have to
@@ -180,9 +176,5 @@ extern "C" {
         x[6] = (unsigned char) (u >> 48);
         x[7] = (unsigned char) (u >> 56);
     }
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* LITTLE_ENDIAN_H */

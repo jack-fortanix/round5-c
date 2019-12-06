@@ -6,10 +6,6 @@
 #ifndef R5_CCA_KEM_H
 #define R5_CCA_KEM_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     /**
      * Generates a CCA KEM key pair. Uses the parameters as specified.
      *
@@ -38,9 +34,5 @@ extern "C" {
      * @return __0__ in case of success
      */
     int r5_cca_kem_decapsulate(unsigned char *k, const unsigned char *ct, const unsigned char *sk);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* R5_CCA_KEM_H */

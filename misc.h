@@ -41,10 +41,6 @@
 
 /** Macro for printing errors. */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     /**
      * Prints the given data as hex digits.
      *
@@ -129,9 +125,5 @@ extern "C" {
      * @return ceil(log2(x))
      */
     uint32_t ceil_log2(uint32_t x);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* MISC_H */

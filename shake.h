@@ -48,10 +48,6 @@ typedef cSHAKE_Instance cshake_ctx; /**< The cshake context (state) */
  */
 #define SHAKE256_RATE 136
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     /**
      * Performs the initialisation step of the SHAKE-128 XOF.
      *
@@ -271,9 +267,5 @@ extern "C" {
             abort();
         }
     }
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* SHAKE_H */

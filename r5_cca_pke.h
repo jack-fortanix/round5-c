@@ -11,10 +11,6 @@
 #ifndef _R5_CCA_PKE_H_
 #define _R5_CCA_PKE_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     /**
      * Generates an ENCRYPT key pair. Uses the parameters as specified.
      *
@@ -47,9 +43,5 @@ extern "C" {
      * @return __0__ in case of success
      */
     int r5_cca_pke_decrypt(unsigned char *m, unsigned long long *m_len, const unsigned char *ct, const unsigned long long ct_len, const unsigned char *sk);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _R5_CCA_PKE_H_ */

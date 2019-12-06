@@ -10,10 +10,6 @@
 #ifndef RNG_H
 #define RNG_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     /**
      * Initializes the random number generator used for generating the random
      * bytes.
@@ -33,8 +29,5 @@ extern "C" {
      */
     int randombytes(unsigned char *x, unsigned long long xlen);
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* RNG_H */

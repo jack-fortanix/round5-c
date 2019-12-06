@@ -18,10 +18,6 @@
 #define CRYPTO_CIPHERTEXTBYTES 0
 #define CRYPTO_ALGNAME "R5ND_5PKE_0d"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     /**
      * Generates an ENCRYPT key pair. Uses the fixed parameter configuration.
      *
@@ -54,9 +50,5 @@ extern "C" {
      * @return __0__ in case of success
      */
     int crypto_encrypt_open(unsigned char *m, unsigned long long *m_len, const unsigned char *ct, const unsigned long long ct_len, const unsigned char *sk);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _API_H_ */

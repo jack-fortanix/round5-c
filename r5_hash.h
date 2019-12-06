@@ -12,9 +12,6 @@
 
 #include "shake.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
     /**
      * The hash function as used within Round5.
@@ -55,8 +52,5 @@ extern "C" {
             cshake128(output, output_len, input, input_len, customization, customization_len);
         }
     }
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* R5_HASH_H */

@@ -310,10 +310,6 @@ typedef struct drbg_ctx {
     x = (uint16_t) LITTLE_ENDIAN16(x); \
 } while (0)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     /**
      * Generates a sequence of deterministic random numbers using the given seed.
      * Can only be used to generate a single sequence of random numbers from the
@@ -348,9 +344,5 @@ extern "C" {
      * @return __0__ in case of success
      */
     int drbg_sampler16_2_once_customization(uint16_t *x, const size_t xlen, const void *seed, const void *customization, const size_t customization_len);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* DRBG_H */

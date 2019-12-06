@@ -12,10 +12,6 @@
 
 #include "r5_parameter_sets.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     /**
      * Creates A random for the given seed and algorithm parameters.
      *
@@ -23,9 +19,5 @@ extern "C" {
      * @param[in]  seed         the seed (PARAMS_KAPPA_BYTES bytes)
      */
     void create_A_random(modq_t *A_random, const unsigned char *seed);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* A_RANDOM_H */

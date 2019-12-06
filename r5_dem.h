@@ -12,10 +12,6 @@
 
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     /**
      * Applies a DEM to the given message using the specified key.
      *
@@ -39,9 +35,5 @@ extern "C" {
      * @return __0__ in case of success
      */
     int round5_dem_inverse(unsigned char *m, unsigned long long *m_len, const unsigned char *key, const unsigned char *c2, const unsigned long long c2_len);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* PST_DEM_H */
