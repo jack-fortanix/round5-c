@@ -12,10 +12,6 @@
 // CCA-KEM KeyGen()
 
 int r5_cca_kem_keygen(uint8_t *pk, uint8_t *sk, const uint8_t coins[3*32]) {
-    uint8_t y[PARAMS_KAPPA_BYTES];
-
-    uint8_t seed[64] = { 0 };
-
     /* Generate the base key pair */
     r5_cpa_pke_keygen(pk, sk, coins);
 
@@ -59,18 +55,6 @@ int r5_cca_kem_encapsulate(uint8_t *ct, uint8_t *k, const uint8_t *pk, const uin
     return 0;
 }
 
-/**
- * Verifies whether or not two byte strings are equal (in constant time).
- *
- * @param s1 the byte string to compare to
- * @param s2 the byte string to compare
- * @param n the number of bytes to compare
- * @return 0 if all size bytes are equal, non-zero otherwise
- */
-static int verify(const void *s1, const void *s2, size_t n) {
-    return constant_time_memcmp(s1, s2, n);
-}
-
 // CCA-KEM Decaps()
 
 int r5_cca_kem_decapsulate(uint8_t *k, const uint8_t *ct, const uint8_t *sk) {
@@ -103,7 +87,7 @@ int r5_cca_kem_decapsulate(uint8_t *k, const uint8_t *ct, const uint8_t *sk) {
     // k = H(L', ct')
     copy_u8(hash_in, L_g_rho_prime[0], PARAMS_KAPPA_BYTES);
     // verification ok ?
-    fail = (uint8_t) verify(ct, ct_prime, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
+    fail = (uint8_t) constant_time_memcmp(ct, ct_prime, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
     // k = H(y, ct') depending on fail state
     conditional_constant_time_memcpy(hash_in, sk + PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES, fail);
 
