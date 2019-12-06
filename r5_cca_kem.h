@@ -6,6 +6,8 @@
 #ifndef R5_CCA_KEM_H
 #define R5_CCA_KEM_H
 
+#include "types.h"
+
     /**
      * Generates a CCA KEM key pair. Uses the parameters as specified.
      *

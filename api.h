@@ -12,11 +12,8 @@
 #ifndef _API_H_
 #define _API_H_
 
-#define CRYPTO_SECRETKEYBYTES 1413
-#define CRYPTO_PUBLICKEYBYTES 1349
-#define CRYPTO_BYTES 1525
-#define CRYPTO_CIPHERTEXTBYTES 0
-#define CRYPTO_ALGNAME "R5ND_5PKE_0d"
+#include "types.h"
+#include "r5_parameter_sets.h"
 
     /**
      * Generates an ENCRYPT key pair. Uses the fixed parameter configuration.

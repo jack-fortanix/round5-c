@@ -3,6 +3,7 @@
  * Markku-Juhani O. Saarinen, Koninklijke Philips N.V.
  */
 
+#include "r5_cca_kem.h"
 #include "r5_cpa_pke.h"
 #include "r5_parameter_sets.h"
 #include "shake.h"

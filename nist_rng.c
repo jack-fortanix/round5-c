@@ -37,7 +37,7 @@ AES256_CTR_DRBG_struct DRBG_ctx;
 
 void AES256_ECB(uint8_t *key, uint8_t *ctr, uint8_t *buffer);
 
-void handleErrors(void) {
+static void handleErrors(void) {
     ERR_print_errors_fp(stderr);
     abort();
 }
