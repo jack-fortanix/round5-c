@@ -10,36 +10,12 @@
 
 #include "r5_hash.h"
 #include "rng.h"
-#include "xef.h"
 #include "ringmul.h"
 #include "misc.h"
 #include "a_random.h"
 
 #include <stdio.h>
 #include <string.h>
-
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-
-/* Wrapper around xef functions so we can seamlessly make use of the optimized xe5 */
-#if PARAMS_F == 5
-#if PARAMS_XE == 190
-#define XEF(function, block, len, f) xe5_190_##function(block)
-#elif PARAMS_XE == 218
-#define XEF(function, block, len, f) xe5_218_##function(block)
-#elif PARAMS_XE == 234
-#define XEF(function, block, len, f) xe5_234_##function(block)
-#endif
-#elif PARAMS_F == 4 && PARAMS_XE == 163
-#define XEF(function, block, len, f) xe4_163_##function(block)
-#elif PARAMS_F == 2 && PARAMS_XE == 53
-#define XEF(function, block, len, f) xe2_53_##function(block)
-#else
-#define XEF(function, block, len, f) xef_##function(block, len, f)
-#endif
-#define xef_compute(block, len, f) XEF(compute, block, len, f)
-#define xef_fixerr(block, len, f) XEF(fixerr, block, len, f)
-
-#endif
 
 // compress ND elements of q bits into p bits and pack into a byte string
 
@@ -133,9 +109,6 @@ int r5_cpa_pke_encrypt(uint8_t *ct, const uint8_t *pk, const uint8_t *m, const u
 
     memcpy(m1, m, PARAMS_KAPPA_BYTES); // add error correction code
     memset(m1 + PARAMS_KAPPA_BYTES, 0, BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS) - PARAMS_KAPPA_BYTES);
-#if (PARAMS_XE != 0)
-    xef_compute(m1, PARAMS_KAPPA_BYTES, PARAMS_F);
-#endif
 
     // Create R
     create_secret_vector(R_idx, rho);
@@ -220,11 +193,6 @@ int r5_cpa_pke_decrypt(uint8_t *m, const uint8_t *sk, const uint8_t *ct) {
     }
 
 
-#if (PARAMS_XE != 0)
-    // Apply error correction
-    xef_compute(m1, PARAMS_KAPPA_BYTES, PARAMS_F);
-    xef_fixerr(m1, PARAMS_KAPPA_BYTES, PARAMS_F);
-#endif
     memcpy(m, m1, PARAMS_KAPPA_BYTES);
 
 #ifdef NIST_KAT_GENERATION
