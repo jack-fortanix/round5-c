@@ -1,7 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <stdlib.h>
 #include "types.h"
 
 /**
@@ -166,5 +165,7 @@
 
 void zero_u8(uint8_t* out, size_t len);
 void zero_u16(uint16_t* out, size_t len);
+
+void crash_immediately();
 
 #endif

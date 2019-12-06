@@ -9,8 +9,6 @@
 #include "rng.h"
 #include "io.h"
 
-#include <stdio.h>
-
 // Size of the vector to pass to probe_cm
 #define PROBEVEC64  ((PARAMS_D + 63) / 64)
 
@@ -229,7 +227,6 @@ int r5_cpa_pke_keygen(uint8_t *pk, uint8_t *sk) {
 
     randombytes(pk, PARAMS_KAPPA_BYTES); // sigma = seed of A
 #ifdef NIST_KAT_GENERATION
-    printf("r5_cpa_pke_keygen: tau=%zu\n", PARAMS_TAU);
     print_hex("r5_cpa_pke_keygen: sigma", pk, PARAMS_KAPPA_BYTES, 1);
 #endif
 

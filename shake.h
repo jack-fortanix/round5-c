@@ -13,9 +13,8 @@
 #ifndef _SHAKE_H_
 #define _SHAKE_H_
 
-#include <stdlib.h>
-#include <stddef.h>
 #include "types.h"
+#include "utils.h"
 
 
 extern "C" {
@@ -36,7 +35,7 @@ typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
      */
     inline void shake256_init(shake_ctx *ctx) {
         if (Keccak_HashInitialize_SHAKE256(ctx) != 0) {
-            abort();
+            crash_immediately();
         }
     }
 
@@ -49,10 +48,10 @@ typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
      */
     inline void shake256_absorb(shake_ctx *ctx, const uint8_t *input, const size_t input_len) {
         if (Keccak_HashUpdate(ctx, input, input_len * 8) != 0) {
-            abort();
+            crash_immediately();
         }
         if (Keccak_HashFinal(ctx, NULL) != 0) {
-            abort();
+            crash_immediately();
         }
     }
 
@@ -67,7 +66,7 @@ typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
      */
     inline void shake256_squeezeblocks(shake_ctx *ctx, uint8_t *output, const size_t nr_blocks) {
         if (Keccak_HashSqueeze(ctx, output, nr_blocks * SHAKE256_RATE * 8) != 0) {
-            abort();
+            crash_immediately();
         }
     }
 
@@ -83,7 +82,7 @@ typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
     shake256_init(&ctx);
     shake256_absorb(&ctx, input, input_len);
     if (Keccak_HashSqueeze(&ctx, output, output_len * 8) != 0) {
-        abort();
+        crash_immediately();
     }
 }
 

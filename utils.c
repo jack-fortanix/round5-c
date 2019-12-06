@@ -1,4 +1,10 @@
 #include "utils.h"
+#include <stdlib.h>
+
+void crash_immediately()
+   {
+   abort();
+   }
 
 void copy_u8(uint8_t* out, const uint8_t* in, size_t len)
    {

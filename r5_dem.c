@@ -120,7 +120,7 @@ int round5_dem_inverse(uint8_t *m, size_t *m_len, const uint8_t *key, const uint
             break;
     }
     if (res) {
-        abort();
+    crash_immediately();
     }
     EVP_CIPHER_CTX_set_padding(ctx, 0); /* Disable padding */
 
