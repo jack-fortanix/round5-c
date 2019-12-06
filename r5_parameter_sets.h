@@ -44,16 +44,10 @@ typedef uint8_t modt_t;
 #define PARAMS_KAPPA    (8 * PARAMS_KAPPA_BYTES)
 #define PARAMS_MU       CEIL_DIV((PARAMS_KAPPA + PARAMS_XE), PARAMS_B_BITS)
 #define PARAMS_MUT_SIZE BITS_TO_BYTES(PARAMS_MU * PARAMS_T_BITS)
-#if PARAMS_K == 1
+
 #define PARAMS_RS_DIV   (0x10000 / PARAMS_ND)
 #define PARAMS_RS_LIM   (PARAMS_ND * PARAMS_RS_DIV)
 #define PARAMS_NDP_SIZE BITS_TO_BYTES(PARAMS_ND * PARAMS_P_BITS)
-#else
-#define PARAMS_RS_DIV   (0x10000 / PARAMS_D)
-#define PARAMS_RS_LIM   (PARAMS_D * PARAMS_RS_DIV)
-#define PARAMS_DP_SIZE  BITS_TO_BYTES(PARAMS_N_BAR * PARAMS_D * PARAMS_P_BITS)
-#define PARAMS_DPU_SIZE BITS_TO_BYTES(PARAMS_M_BAR * PARAMS_D * PARAMS_P_BITS)
-#endif
 
 // Definition of TAU parameter, defaults to 0 unless otherwise defined and non-ring
 #if PARAMS_K == 1 || !defined(ROUND5_API_TAU)
@@ -116,6 +110,10 @@ typedef uint8_t modt_t;
 #define CRYPTO_PUBLICKEYBYTES  PARAMS_PK_SIZE
 #define CRYPTO_BYTES           (PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES + 16)
 #define CRYPTO_CIPHERTEXTBYTES 0
+
+#if PARAMS_TAU != 0
+ #error "bad tau"
+#endif
 
 // AVX2 implies CM_CACHE
 #define CM_CACHE
