@@ -8,8 +8,8 @@
  */
 
 #include "misc.h"
-
 #include <stdio.h>
+
 
 void print_hex(const char *var, const unsigned char *data, const size_t nr_elements, const size_t element_size) {
     size_t i, ii;

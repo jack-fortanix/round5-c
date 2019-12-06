@@ -5,7 +5,7 @@
 //  Copyright © 2017 Bassham, Lawrence E (Fed). All rights reserved.
 //
 
-#include <stdio.h>
+
 
 #define RNG_SUCCESS      0
 #define RNG_BAD_MAXLEN  -1

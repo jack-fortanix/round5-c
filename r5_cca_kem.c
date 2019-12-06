@@ -6,7 +6,7 @@
 #include "r5_cpa_pke.h"
 #include "r5_parameter_sets.h"
 
-#include <stdio.h>
+
 #include <stdlib.h>
 #include <string.h>
 

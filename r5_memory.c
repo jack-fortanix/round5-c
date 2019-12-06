@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <stdio.h>
+
 
 int constant_time_memcmp(const void *s1, const void *s2, size_t n) {
     const uint8_t * a = s1;

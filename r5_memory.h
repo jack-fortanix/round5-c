@@ -13,9 +13,6 @@
 #include "misc.h"
 
 #include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
     /**
      * Constant time memory comparison function. Use to replace `memcmp()` when
