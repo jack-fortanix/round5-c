@@ -10,7 +10,6 @@
 #ifndef MISC_H
 #define MISC_H
 
-#include <stdlib.h>
 #include "types.h"
 
 /** Macro for printing errors. */
