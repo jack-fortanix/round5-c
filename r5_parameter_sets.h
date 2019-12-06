@@ -27,11 +27,6 @@ static const size_t PARAMS_M_BAR     = 1;
 static const size_t PARAMS_F         = 0;
 #define CRYPTO_ALGNAME     "R5ND_5PKE_0d"
 
-// appropriate types
-typedef uint16_t modq_t;
-typedef uint16_t modp_t;
-typedef uint8_t modt_t;
-
 static const size_t PARAMS_ND     = PARAMS_D;
 static const size_t PARAMS_K      = (PARAMS_D/PARAMS_N);
 static const size_t PARAMS_Q      = (1 << PARAMS_Q_BITS);
@@ -39,14 +34,14 @@ static const size_t PARAMS_Q_MASK = (PARAMS_Q - 1);
 static const size_t PARAMS_P      = (1 << PARAMS_P_BITS);
 static const size_t PARAMS_P_MASK = (PARAMS_P - 1);
 static const size_t PARAMS_KAPPA  = (8 * PARAMS_KAPPA_BYTES);
-static const size_t PARAMS_MU     = CEIL_DIV((PARAMS_KAPPA), PARAMS_B_BITS);
-static const size_t PARAMS_MUT_SIZE = BITS_TO_BYTES(PARAMS_MU * PARAMS_T_BITS);
+static const size_t PARAMS_MU     = PARAMS_KAPPA;
+static const size_t PARAMS_MUT_SIZE = (PARAMS_MU * PARAMS_T_BITS + 7) / 8;
 
 static const size_t PARAMS_RS_DIV = (0x10000 / PARAMS_ND);
 static const size_t PARAMS_RS_LIM = (PARAMS_ND * PARAMS_RS_DIV);
-static const size_t PARAMS_NDP_SIZE = BITS_TO_BYTES(PARAMS_ND * PARAMS_P_BITS);
+static const size_t PARAMS_NDP_SIZE = (PARAMS_ND * PARAMS_P_BITS + 7) / 8;
 
-static const size_t PARAMS_MUB_SIZE = BITS_TO_BYTES(PARAMS_MU * PARAMS_B_BITS);
+static const size_t PARAMS_MUB_SIZE = (PARAMS_MU * PARAMS_B_BITS + 7) / 8;
 
 static const size_t PARAMS_TAU = 0;
 

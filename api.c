@@ -90,7 +90,7 @@ static int round5_dem_inverse(uint8_t *m, size_t *m_len, const uint8_t *key, con
     /* Initialise AES GCM */
     res = !(ctx = EVP_CIPHER_CTX_new()) || (EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, final_key_iv, iv) != 1);
     if (res) {
-    crash_immediately();
+        goto done_dem_inverse;
     }
     EVP_CIPHER_CTX_set_padding(ctx, 0); /* Disable padding */
 

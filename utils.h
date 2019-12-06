@@ -3,24 +3,6 @@
 
 #include "types.h"
 
-/**
- * Macro to calculate _ceil(a/b)_.
- *
- * Note: only for _a_ and _b > 0_!
- *
- * @param[in] a, b the values of _a_ and _b_
- * @return _ceil(a/b)_
- */
-#define CEIL_DIV(a,b) ((a+b-1)/b)
-
-/**
- * Macro to converts a number of bits into a number of bytes.
- *
- * @param[in] b the number of bits to convert to number of bytes
- * @return _ceil(b/8)_
- */
-#define BITS_TO_BYTES(b) (CEIL_DIV(b,8))
-
     /**
      * Constant time memory comparison function. Use to replace `memcmp()` when
      * comparing security critical data.
