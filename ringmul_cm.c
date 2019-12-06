@@ -6,26 +6,36 @@
 // Fast ring arithmetic (with cache attack countermeasures)
 
 #include "ringmul.h"
-
-#include "drbg.h"
 #include "probe_cm.h"
-
+#include "shake.h"
 
 
 // create a sparse ternary vector from a seed
 
-void create_secret_vector(uint16_t idx[PARAMS_H / 2][2], const uint8_t *seed) {
-    size_t i;
-    uint16_t x;
-    uint64_t v[PROBEVEC64];
+void create_secret_vector(uint16_t idx[PARAMS_H / 2][2], const uint8_t seed[PARAMS_KAPPA_BYTES]) {
+    uint64_t v[PROBEVEC64] = { 0 };
 
-    memset(v, 0, sizeof (v));
-    drbg_init(seed);
+    shake_ctx shake;
 
-    for (i = 0; i < PARAMS_H; i++) {
+    shake256_init(&shake);
+    shake256_absorb(&shake, seed, PARAMS_KAPPA_BYTES);
+    size_t index = SHAKE256_RATE;
+    uint8_t output[SHAKE256_RATE] = { 0 };
+
+    for (size_t i = 0; i < PARAMS_H; i++) {
+        uint16_t x;
         do {
             do {
-                drbg16(x);
+
+            for (size_t j = 0; j < 2; j++) {
+                if (index >= SHAKE256_RATE) {
+                    shake256_squeezeblocks(&shake, output, 1);
+                    index = 0;
+                }
+
+                ((uint8_t *) &x)[j] = output[index++];
+            }
+
             } while (x >= PARAMS_RS_LIM);
             x /= PARAMS_RS_DIV;
         } while (probe_cm(v, x));
