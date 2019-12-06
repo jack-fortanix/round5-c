@@ -53,7 +53,7 @@ int drbg_sampler16_2_once(uint16_t *x, const size_t xlen, const void *seed) {
     size_t nr_full_blocks = (xlen * sizeof (uint16_t)) >> 4;
     int len;
     if (nr_full_blocks) {
-        uint8_t *input = checked_calloc(nr_full_blocks, 16);
+        uint8_t *input = calloc(nr_full_blocks, 16);
         if (EVP_EncryptUpdate(aes_ctx, (uint8_t *) x, &len, input, (int) (nr_full_blocks << 4)) != 1) {
             abort();
         }
@@ -122,7 +122,7 @@ int drbg_sampler16_2_once_customization(uint16_t *x, const size_t xlen, const vo
     size_t nr_full_blocks = (xlen * sizeof (uint16_t)) >> 4;
     int len;
     if (nr_full_blocks) {
-        uint8_t *input = checked_calloc(nr_full_blocks, 16);
+        uint8_t *input = calloc(nr_full_blocks, 16);
         if (EVP_EncryptUpdate(aes_ctx, (uint8_t *) x, &len, input, (int) (nr_full_blocks << 4)) != 1) {
             abort();
         }

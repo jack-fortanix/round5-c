@@ -138,7 +138,7 @@ int round5_dem_inverse(unsigned char *m, unsigned long long *m_len, const unsign
     if ((diff >= 0 && diff < (ptrdiff_t) c2_len_no_tag) || (diff < 0 && diff > -((ptrdiff_t) c2_len_no_tag))) {
         /* EVP_DecryptUpdate does not handle overlapping pointers so we need
            to create a temporary buffer for the decrypted message. */
-        tmp_m = checked_malloc(c2_len_no_tag);
+        tmp_m = malloc(c2_len_no_tag);
     }
     if (EVP_DecryptUpdate(ctx, tmp_m, &len, c2, (int) c2_len_no_tag) != 1) {
         goto done_dem_inverse;

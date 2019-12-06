@@ -13,14 +13,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#undef checked_malloc
-#undef checked_calloc
-#undef checked_realloc
-
-extern void *checked_malloc(size_t size, const char *file, int line);
-extern void *checked_calloc(size_t count, size_t size, const char *file, const int line);
-extern void *checked_realloc(void *ptr, size_t size, const char *file, const int line);
-
 int constant_time_memcmp(const void *s1, const void *s2, size_t n) {
     const uint8_t * a = s1;
     const uint8_t * b = s2;
