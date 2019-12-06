@@ -1,4 +1,5 @@
 #include "shake.h"
+#include "utils.h"
 
 extern "C" {
 #include <libkeccak.a.headers/KeccakHash.h>

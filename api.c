@@ -3,6 +3,7 @@
 #include "r5_parameter_sets.h"
 #include "r5_cpa_pke.h"
 #include "shake.h"
+#include "utils.h"
 #include "io.h"
 #include <openssl/evp.h>
 

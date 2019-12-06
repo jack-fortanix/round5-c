@@ -7,13 +7,11 @@
 #define _R5_PARAMETER_SETS_H_
 
 #include "types.h"
-#include "utils.h"
 
 // Parameter Set definitions
 
 /* NIST API Round5 parameter set definition */
 
-#define ROUND5_CCA_PKE
 static const size_t PARAMS_KAPPA_BYTES = 32;
 static const size_t PARAMS_D         = 1170;
 static const size_t PARAMS_N         = 1170;
@@ -25,7 +23,6 @@ static const size_t PARAMS_B_BITS    = 1;
 static const size_t PARAMS_N_BAR     = 1;
 static const size_t PARAMS_M_BAR     = 1;
 static const size_t PARAMS_F         = 0;
-#define CRYPTO_ALGNAME     "R5ND_5PKE_0d"
 
 static const size_t PARAMS_ND     = PARAMS_D;
 static const size_t PARAMS_K      = (PARAMS_D/PARAMS_N);

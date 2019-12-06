@@ -209,7 +209,7 @@ main()
         return KAT_FILE_OPEN_ERROR;
     }
     
-    fprintf(fp_rsp, "# %s\n\n", CRYPTO_ALGNAME);
+    fprintf(fp_rsp, "# %s\n\n", "R5ND_5PKE_0d");
     done = 0;
     do {
         if ( FindMarker(fp_req, "count = ") )

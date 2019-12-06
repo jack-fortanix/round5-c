@@ -14,7 +14,6 @@
 #define _SHAKE_H_
 
 #include "types.h"
-#include "utils.h"
 
 typedef uint8_t shake_ctx[224];
 
