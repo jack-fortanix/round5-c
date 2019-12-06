@@ -53,17 +53,3 @@ const uint8_t * s = (const uint8_t*)src;
     }
 }
 
-uint32_t ceil_log2(uint32_t x) {
-    uint32_t bits = 0;
-    uint32_t ones = 0;
-
-    while (x >>= 1) {
-        ones += x & 0x1;
-        ++bits;
-    }
-    if (ones > 1) { /* ceil */
-        ++bits;
-    }
-
-    return bits;
-}
