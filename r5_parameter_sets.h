@@ -13,9 +13,8 @@
 // Parameter Set definitions
 
 /* NIST API Round5 parameter set definition */
-#ifndef NO_CM_CACHE
 #define CM_CACHE
-#endif
+
 #define ROUND5_CCA_PKE
 #define PARAMS_KAPPA_BYTES 32
 #define PARAMS_D           1170
@@ -33,11 +32,7 @@
 
 // appropriate types
 typedef uint16_t modq_t;
-#if (PARAMS_P_BITS <= 8)
-typedef uint8_t modp_t;
-#else
 typedef uint16_t modp_t;
-#endif
 typedef uint8_t modt_t;
 
 #define PARAMS_ND       PARAMS_D
@@ -114,24 +109,11 @@ typedef uint8_t modt_t;
 
 #endif
 
-// Derive the NIST parameters
-#ifdef ROUND5_CCA_PKE
-
 // CCA_PKE Variant
 #define CRYPTO_SECRETKEYBYTES  (PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE)
 #define CRYPTO_PUBLICKEYBYTES  PARAMS_PK_SIZE
 #define CRYPTO_BYTES           (PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES + 16)
 #define CRYPTO_CIPHERTEXTBYTES 0
-
-#else
-
-// CPA_KEM Variant
-#define CRYPTO_SECRETKEYBYTES  PARAMS_KAPPA_BYTES
-#define CRYPTO_PUBLICKEYBYTES  PARAMS_PK_SIZE
-#define CRYPTO_BYTES           PARAMS_KAPPA_BYTES
-#define CRYPTO_CIPHERTEXTBYTES PARAMS_CT_SIZE
-
-#endif /* ROUND5_CCA_PKE */
 
 // AVX2 implies CM_CACHE
 #define CM_CACHE
