@@ -36,21 +36,11 @@ typedef struct drbg_ctx {
  *
  * @param[in] seed      the seed to use for the deterministic number generator
  */
-#if PARAMS_KAPPA_BYTES > 16
 #define drbg_init(seed) \
     drbg_ctx ctx; \
     shake256_init(&ctx.generator_ctx.shake); \
     shake256_absorb(&ctx.generator_ctx.shake, seed, PARAMS_KAPPA_BYTES); \
     ctx.index = SHAKE256_RATE
-
-#else
-#define drbg_init(seed) \
-    drbg_ctx ctx; \
-    shake128_init(&ctx.generator_ctx.shake); \
-    shake128_absorb(&ctx.generator_ctx.shake, seed, PARAMS_KAPPA_BYTES); \
-    ctx.index = SHAKE128_RATE
-
-#endif
 
 /**
  * Initializes the deterministic random number generator with the specified
@@ -60,21 +50,11 @@ typedef struct drbg_ctx {
  * @param[in] customization     the customization string to use
  * @param[in] customization_len the length of the customization string
  */
-#if PARAMS_KAPPA_BYTES > 16
 #define drbg_init_customization(seed, customization, customization_len) \
     drbg_ctx ctx; \
     cshake256_init(&ctx.generator_ctx.cshake, customization, customization_len); \
     cshake256_absorb(&ctx.generator_ctx.cshake, seed, PARAMS_KAPPA_BYTES); \
     ctx.index = SHAKE256_RATE
-
-#else
-#define drbg_init_customization(seed, customization, customization_len) \
-    drbg_ctx ctx; \
-    cshake128_init(&ctx.generator_ctx.cshake, customization, customization_len); \
-    cshake128_absorb(&ctx.generator_ctx.cshake, seed, PARAMS_KAPPA_BYTES); \
-    ctx.index = SHAKE128_RATE
-
-#endif
 
 /**
  * Generates the next sequence of deterministic random bytes using the
@@ -84,7 +64,6 @@ typedef struct drbg_ctx {
  * @param[in]  xlen the number of deterministic random bytes to generate
  */
 
-#if PARAMS_KAPPA_BYTES > 16
 #define drbg(x, xlen) do { \
     size_t i, j; \
     i = ctx.index; \
@@ -97,20 +76,6 @@ typedef struct drbg_ctx {
     } \
     ctx.index = i; \
 } while (0)
-#else
-#define drbg(x, xlen) do { \
-    size_t i, j; \
-    i = ctx.index; \
-    for (j = 0; j < xlen; j++) { \
-        if (i >= SHAKE128_RATE) { \
-            shake128_squeezeblocks(&ctx.generator_ctx.shake, ctx.output, 1); \
-            i = 0; \
-        } \
-        ((uint8_t *) x)[j] = ctx.output[i++]; \
-    } \
-    ctx.index = i; \
-} while (0)
-#endif
 
 /**
  * Generates the next deterministic random 16-bit integer using the
@@ -131,7 +96,6 @@ typedef struct drbg_ctx {
  * @param[in]  xlen the number of deterministic random bytes to generate
  * @return __0__ in case of success
  */
-#if PARAMS_KAPPA_BYTES > 16
 #define drbg_customization(x, xlen) do { \
     size_t i, j; \
     i = ctx.index; \
@@ -144,20 +108,6 @@ typedef struct drbg_ctx {
     } \
     ctx.index = i; \
 } while (0)
-#else
-#define drbg_customization(x, xlen) do { \
-    size_t i, j; \
-    i = ctx.index; \
-    for (j = 0; j < xlen; j++) { \
-        if (i >= SHAKE128_RATE) { \
-            cshake128_squeezeblocks(&ctx.generator_ctx.cshake, ctx.output, 1); \
-            i = 0; \
-        } \
-        ((uint8_t *) x)[j] = ctx.output[i++]; \
-    } \
-    ctx.index = i; \
-} while (0)
-#endif
 
 /**
  * Generates the next deterministic random 16-bit integer using the
