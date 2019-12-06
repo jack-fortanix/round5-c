@@ -17,12 +17,6 @@
  * Conditionally provide the PKE NIST API functions.
  */
 
-#if CRYPTO_CIPHERTEXTBYTES == 0
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "r5_cca_pke.h"
 
     /**
@@ -63,11 +57,5 @@ extern "C" {
     inline int crypto_encrypt_open(unsigned char *m, unsigned long long *m_len, const unsigned char *ct, const unsigned long long ct_len, const unsigned char *sk) {
         return r5_cca_pke_decrypt(m, m_len, ct, ct_len, sk);
     }
-
-#endif
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* _CCA_ENCRYPT_H_ */

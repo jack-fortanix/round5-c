@@ -91,29 +91,17 @@ void ringmul_p(modp_t d[PARAMS_MU], modp_t a[PARAMS_ND], uint16_t idx[PARAMS_H /
     modp_t p[PARAMS_ND + 1];
 
     // Note: order of coefficients a[1..n] is reversed!
-#if (PARAMS_XE == 0) && (PARAMS_F == 0)
     // Without error correction we "lift" -- i.e. multiply by (x - 1)
     p[0] = (modp_t) (-a[0]);
     for (i = 1; i < PARAMS_ND; i++) {
         p[PARAMS_ND + 1 - i] = (modp_t) (a[i - 1] - a[i]);
     }
     p[1] = a[PARAMS_ND - 1];
-#define SIZE_TMP_D PARAMS_ND
-#else
-    // With error correction we do not "lift"
-    p[0] = a[0];
-    for (i = 2; i < PARAMS_ND + 1; i++) {
-        p[i] = a[PARAMS_ND + 1 - i];
-    }
-    p[1] = 0;
-    // Since we do not unlift at the end, we actually need to compute one element more.
-#define SIZE_TMP_D (PARAMS_ND+1)
-#endif
 
-    modp_t tmp_d[SIZE_TMP_D];
+    modp_t tmp_d[PARAMS_ND];
 
     // Initialize result
-    memset(tmp_d, 0, SIZE_TMP_D * sizeof (modp_t));
+    memset(tmp_d, 0, PARAMS_ND * sizeof (modp_t));
 
     for (i = 0; i < PARAMS_H / 2; i++) {
         // Modified to always scan the same ranges
@@ -124,7 +112,7 @@ void ringmul_p(modp_t d[PARAMS_MU], modp_t a[PARAMS_ND], uint16_t idx[PARAMS_H /
             tmp_d[j] = (modp_t) (tmp_d[j] + p[--k]);
             j++;
         }
-        for (k = PARAMS_ND + 1; j < SIZE_TMP_D;) {
+        for (k = PARAMS_ND + 1; j < PARAMS_ND;) {
             tmp_d[j] = (modp_t) (tmp_d[j] + p[--k]);
             j++;
         }
@@ -135,13 +123,12 @@ void ringmul_p(modp_t d[PARAMS_MU], modp_t a[PARAMS_ND], uint16_t idx[PARAMS_H /
             tmp_d[j] = (modp_t) (tmp_d[j] - p[--k]);
             j++;
         }
-        for (k = PARAMS_ND + 1; j < SIZE_TMP_D;) {
+        for (k = PARAMS_ND + 1; j < PARAMS_ND;) {
             tmp_d[j] = (modp_t) (tmp_d[j] - p[--k]);
             j++;
         }
     }
 
-#if (PARAMS_XE == 0) && (PARAMS_F == 0)
     // Without error correction we "lifted" so we now need to "unlift"
     tmp_d[0] = (modp_t) (-tmp_d[0]);
     for (i = 1; i < PARAMS_MU; ++i) {
@@ -149,8 +136,4 @@ void ringmul_p(modp_t d[PARAMS_MU], modp_t a[PARAMS_ND], uint16_t idx[PARAMS_H /
     }
     // Copy result
     memcpy(d, tmp_d, PARAMS_MU * sizeof (modp_t));
-#else
-    // Copy result, skipping the “additional” element
-    memcpy(d, tmp_d + 1, PARAMS_MU * sizeof (modp_t));
-#endif
 }
