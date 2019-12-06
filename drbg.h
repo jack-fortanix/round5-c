@@ -23,10 +23,7 @@
  */
 typedef struct drbg_ctx {
 
-    union {
-        shake_ctx shake; /**< Context in case of a SHAKE generator */
-        cshake_ctx cshake; /**< Context in case of a cSHAKE generator */
-    } generator_ctx; /**< The generator context */
+   shake_ctx shake; /**< Context in case of a SHAKE generator */
     uint8_t output[SHAKE128_RATE > SHAKE256_RATE ? SHAKE128_RATE : SHAKE256_RATE]; /**< Buffer for output. */
     size_t index; /**< Current index in buffer. */
 } drbg_ctx;
@@ -38,8 +35,8 @@ typedef struct drbg_ctx {
  */
 #define drbg_init(seed) \
     drbg_ctx ctx; \
-    shake256_init(&ctx.generator_ctx.shake); \
-    shake256_absorb(&ctx.generator_ctx.shake, seed, PARAMS_KAPPA_BYTES); \
+    shake256_init(&ctx.shake); \
+    shake256_absorb(&ctx.shake, seed, PARAMS_KAPPA_BYTES); \
     ctx.index = SHAKE256_RATE
 
 /**
@@ -55,7 +52,7 @@ typedef struct drbg_ctx {
     i = ctx.index; \
     for (j = 0; j < xlen; j++) { \
         if (i >= SHAKE256_RATE) { \
-            shake256_squeezeblocks(&ctx.generator_ctx.shake, ctx.output, 1); \
+            shake256_squeezeblocks(&ctx.shake, ctx.output, 1); \
             i = 0; \
         } \
         ((uint8_t *) x)[j] = ctx.output[i++]; \
