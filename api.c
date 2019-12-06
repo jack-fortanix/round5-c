@@ -1,8 +1,9 @@
 
 #include "api.h"
 #include "r5_parameter_sets.h"
-#include "r5_cca_kem.h"
+#include "r5_cpa_pke.h"
 #include "shake.h"
+#include "io.h"
 #include <openssl/evp.h>
 
 static int round5_dem(uint8_t *c2, size_t *c2_len, const uint8_t *key, const uint8_t *m, const size_t m_len) {
@@ -135,27 +136,48 @@ done_dem_inverse:
 }
 
 
-/**
-     * Generates an ENCRYPT key pair.
-     *
-     * @param[out] pk public key
-     * @param[out] sk secret key
-     * @return __0__ in case of success
-     */
 int crypto_encrypt_keypair(uint8_t *pk, uint8_t *sk, const uint8_t coins[3*32]) {
-return r5_cca_kem_keygen(pk, sk, coins);
+    /* Generate the base key pair */
+    r5_cpa_pke_keygen(pk, sk, coins);
+
+    /* Append y and pk to sk */
+    copy_u8(sk + PARAMS_KAPPA_BYTES, &coins[64], PARAMS_KAPPA_BYTES);
+    copy_u8(sk + PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES, pk, PARAMS_PK_SIZE);
+
+    return 0;
     }
 
-    /**
-     * Encrypts a message.
-     *
-     * @param[out] ct     the encrypted message
-     * @param[out] ct_len the length of the encrypted message (`CRYPTO_CIPHERTEXTBYTES` + `m_len`)
-     * @param[in]  m      the message to encrypt
-     * @param[in]  m_len  the length of the message to encrypt
-     * @param[in]  pk     the public key to use for the encryption
-     * @return __0__ in case of success
-     */
+static int r5_cca_kem_encapsulate(uint8_t *ct, uint8_t *k, const uint8_t *pk, const uint8_t coins[32]) {
+    uint8_t hash_in[PARAMS_KAPPA_BYTES + (PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES > PARAMS_PK_SIZE ? PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES : PARAMS_PK_SIZE)];
+    uint8_t L_g_rho[3][PARAMS_KAPPA_BYTES];
+
+    copy_u8(hash_in, coins, PARAMS_KAPPA_BYTES); // G: (l | g | rho) = h(coins | pk);
+    copy_u8(hash_in + PARAMS_KAPPA_BYTES, pk, PARAMS_PK_SIZE);
+
+    shake256((uint8_t *) L_g_rho, 3 * PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE);
+
+#ifdef NIST_KAT_GENERATION
+    print_hex("r5_cca_kem_encapsulate: m", coins, PARAMS_KAPPA_BYTES, 1);
+    print_hex("r5_cca_kem_encapsulate: L", L_g_rho[0], PARAMS_KAPPA_BYTES, 1);
+    print_hex("r5_cca_kem_encapsulate: g", L_g_rho[1], PARAMS_KAPPA_BYTES, 1);
+    print_hex("r5_cca_kem_encapsulate: rho", L_g_rho[2], PARAMS_KAPPA_BYTES, 1);
+#endif
+
+    /* Encrypt  */
+    r5_cpa_pke_encrypt(ct, pk, coins, L_g_rho[2]); // m: ct = (U,v)
+
+    /* Append g: ct = (U,v,g) */
+    copy_u8(ct + PARAMS_CT_SIZE, L_g_rho[1], PARAMS_KAPPA_BYTES);
+
+    /* k = H(L, ct) */
+    copy_u8(hash_in, L_g_rho[0], PARAMS_KAPPA_BYTES);
+    copy_u8(hash_in + PARAMS_KAPPA_BYTES,
+            ct, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
+    shake256(k, PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
+
+    return 0;
+}
+
 int crypto_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk, const uint8_t coins[32]) {
     int result = -1;
     const size_t c1_len = PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES;
@@ -184,17 +206,46 @@ done_encrypt:
     return result;
     }
 
-    /**
-     * Decrypts a message.
-     *
-     * @param[out] m      the decrypted message
-     * @param[out] m_len  the length of the decrypted message (`ct_len` - `CRYPTO_CIPHERTEXTBYTES`)
-     * @param[in]  ct     the message to decrypt
-     * @param[in]  ct_len the length of the message to decrypt
-     * @param[in]  sk     the secret key to use for the decryption
-     * @return __0__ in case of success
-     */
-    int crypto_encrypt_open(uint8_t *m, size_t *m_len, const uint8_t *ct, const size_t ct_len, const uint8_t *sk) {
+static int r5_cca_kem_decapsulate(uint8_t *k, const uint8_t *ct, const uint8_t *sk) {
+    uint8_t hash_in[PARAMS_KAPPA_BYTES + (PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES > PARAMS_PK_SIZE ? PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES : PARAMS_PK_SIZE)];
+    uint8_t m_prime[PARAMS_KAPPA_BYTES];
+    uint8_t L_g_rho_prime[3][PARAMS_KAPPA_BYTES];
+    uint8_t ct_prime[PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES];
+
+    r5_cpa_pke_decrypt(m_prime, sk, ct); // r5_cpa_pke_decrypt m'
+
+    copy_u8(hash_in, m_prime, PARAMS_KAPPA_BYTES);
+    copy_u8(hash_in + PARAMS_KAPPA_BYTES, // (L | g | rho) = h(m | pk)
+            sk + PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES, PARAMS_PK_SIZE);
+    shake256((uint8_t *) L_g_rho_prime, 3 * PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE);
+
+#ifdef NIST_KAT_GENERATION
+    print_hex("r5_cca_kem_decapsulate: m_prime", m_prime, PARAMS_KAPPA_BYTES, 1);
+    print_hex("r5_cca_kem_decapsulate: L_prime", L_g_rho_prime[0], PARAMS_KAPPA_BYTES, 1);
+    print_hex("r5_cca_kem_decapsulate: g_prime", L_g_rho_prime[1], PARAMS_KAPPA_BYTES, 1);
+    print_hex("r5_cca_kem_decapsulate: rho_prime", L_g_rho_prime[2], PARAMS_KAPPA_BYTES, 1);
+#endif
+
+    // Encrypt m: ct' = (U',v')
+    r5_cpa_pke_encrypt(ct_prime, sk + PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES, m_prime, L_g_rho_prime[2]);
+
+    // ct' = (U',v',g')
+    copy_u8(ct_prime + PARAMS_CT_SIZE, L_g_rho_prime[1], PARAMS_KAPPA_BYTES);
+
+    // k = H(L', ct')
+    copy_u8(hash_in, L_g_rho_prime[0], PARAMS_KAPPA_BYTES);
+    // verification ok ?
+    const uint8_t fail = (uint8_t) constant_time_memcmp(ct, ct_prime, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
+    // k = H(y, ct') depending on fail state
+    conditional_constant_time_memcpy(hash_in, sk + PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES, fail);
+
+    copy_u8(hash_in + PARAMS_KAPPA_BYTES, ct_prime, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
+    shake256(k, PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
+
+    return 0;
+}
+
+int crypto_encrypt_open(uint8_t *m, size_t *m_len, const uint8_t *ct, const size_t ct_len, const uint8_t *sk) {
     int result = -1;
     uint8_t k[PARAMS_KAPPA_BYTES];
     const uint8_t * const c1 = ct;
