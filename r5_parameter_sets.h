@@ -13,7 +13,6 @@
 // Parameter Set definitions
 
 /* NIST API Round5 parameter set definition */
-#define CM_CACHE
 
 #define ROUND5_CCA_PKE
 #define PARAMS_KAPPA_BYTES 32
@@ -56,20 +55,6 @@ typedef uint8_t modt_t;
 #endif
 #define PARAMS_TAU      ROUND5_API_TAU
 
-// Define the length of the random vector when TAU is 2 is used for generating A, defaults to parameter 2^11.
-// Important: Must be a power of two and > d
-#if !defined(ROUND5_API_TAU2_LEN) || ROUND5_API_TAU2_LEN == 0
-#undef ROUND5_API_TAU2_LEN
-#define ROUND5_API_TAU2_LEN (1<<11)
-#endif
-#if ROUND5_API_TAU2_LEN > (1<<31)
-#error ROUND5_API_TAU2_LEN must be less than or equal to 2^31
-#endif
-#if (ROUND5_API_TAU2_LEN & (ROUND5_API_TAU2_LEN - 1)) != 0 || ROUND5_API_TAU2_LEN < PARAMS_D
-#error ROUND5_API_TAU2_LEN must be a power of two and greater than or equal to PARAMS_D
-#endif
-#define PARAMS_TAU2_LEN ROUND5_API_TAU2_LEN
-
 // Rounding constants
 #if ((PARAMS_Q_BITS - PARAMS_P_BITS + PARAMS_T_BITS) < PARAMS_P_BITS)
 #define PARAMS_Z_BITS   PARAMS_P_BITS
@@ -80,42 +65,13 @@ typedef uint8_t modt_t;
 #define PARAMS_H2       (1 << (PARAMS_Q_BITS - PARAMS_Z_BITS - 1))
 #define PARAMS_H3       ((1 << (PARAMS_P_BITS - PARAMS_T_BITS - 1)) + (1 << (PARAMS_P_BITS - PARAMS_B_BITS - 1)) - (1 << (PARAMS_Q_BITS - PARAMS_Z_BITS - 1)))
 
-#if PARAMS_K == 1
 #define PARAMS_PK_SIZE  (PARAMS_KAPPA_BYTES + PARAMS_NDP_SIZE)
 #define PARAMS_CT_SIZE  (PARAMS_NDP_SIZE + PARAMS_MUT_SIZE)
-#else
-#error bad k
-
-#define PARAMS_PK_SIZE  (PARAMS_KAPPA_BYTES + PARAMS_DP_SIZE)
-#define PARAMS_CT_SIZE  (PARAMS_DPU_SIZE + PARAMS_MUT_SIZE)
-
-// Packing shift
-#if PARAMS_B_BITS == 1
-#define PACK_SHIFT 3
-#define PACK_AND 7
-#endif
-#if PARAMS_B_BITS == 2
-#define PACK_SHIFT 2
-#define PACK_AND 3
-#endif
-#if PARAMS_B_BITS == 4
-#define PACK_SHIFT 1
-#define PACK_AND 1
-#endif
-
-#endif
 
 // CCA_PKE Variant
 #define CRYPTO_SECRETKEYBYTES  (PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE)
 #define CRYPTO_PUBLICKEYBYTES  PARAMS_PK_SIZE
 #define CRYPTO_BYTES           (PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES + 16)
 #define CRYPTO_CIPHERTEXTBYTES 0
-
-#if PARAMS_TAU != 0
- #error "bad tau"
-#endif
-
-// AVX2 implies CM_CACHE
-#define CM_CACHE
 
 #endif /* _R5_PARAMETER_SETS_H_ */
