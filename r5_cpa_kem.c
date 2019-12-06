@@ -12,7 +12,7 @@
 #include "rng.h"
 #include "misc.h"
 
-#include <stdlib.h>
+
 
 
 // CPA-KEM KeyGen()
