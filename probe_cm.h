@@ -11,21 +11,10 @@
 // Size of the vector to pass to probe_cm
 #define PROBEVEC64  ((PARAMS_D + 63) / 64)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
     // Cache-resistant "occupancy probe". Tests and "occupies" a single slot at x.
     // Return value zero (false) indicates the slot was originally empty.
 
-#if PARAMS_K != 1
-    int probe_cm(uint64_t *add, uint64_t *sub, const uint16_t x);
-#else
     int probe_cm(uint64_t *v, const uint16_t x);
-#endif
 
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* PROBE_CM_H */
