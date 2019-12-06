@@ -98,6 +98,10 @@ int round5_dem_inverse(unsigned char *m, unsigned long long *m_len, const unsign
     unsigned char tag[16];
     const unsigned long long c2_len_no_tag = c2_len - 16U;
     const unsigned char * const iv = final_key_iv + PARAMS_KAPPA_BYTES;
+    int ret;
+    unsigned char * tmp_m;
+    ptrdiff_t diff;
+    int res = 1;
 
     /* Check length, must at least be as long as the tag (16 bytes).
      * Note that this is should already have been checked when calling this
@@ -115,7 +119,6 @@ int round5_dem_inverse(unsigned char *m, unsigned long long *m_len, const unsign
     memcpy(tag, c2 + c2_len_no_tag, 16);
 
     /* Initialise AES GCM */
-    int res = 1;
     switch (PARAMS_KAPPA_BYTES) {
         case 16:
             res = !(ctx = EVP_CIPHER_CTX_new()) || (EVP_DecryptInit_ex(ctx, EVP_aes_128_gcm(), NULL, final_key_iv, iv) != 1);
@@ -133,12 +136,12 @@ int round5_dem_inverse(unsigned char *m, unsigned long long *m_len, const unsign
     EVP_CIPHER_CTX_set_padding(ctx, 0); /* Disable padding */
 
     /* Decrypt */
-    unsigned char * tmp_m = m;
-    ptrdiff_t diff = m - c2;
+    tmp_m = m;
+    diff = m - c2;
     if ((diff >= 0 && diff < (ptrdiff_t) c2_len_no_tag) || (diff < 0 && diff > -((ptrdiff_t) c2_len_no_tag))) {
         /* EVP_DecryptUpdate does not handle overlapping pointers so we need
            to create a temporary buffer for the decrypted message. */
-        tmp_m = malloc(c2_len_no_tag);
+    tmp_m = (uint8_t*)malloc(c2_len_no_tag);
     }
     if (EVP_DecryptUpdate(ctx, tmp_m, &len, c2, (int) c2_len_no_tag) != 1) {
         goto done_dem_inverse;
@@ -156,7 +159,7 @@ int round5_dem_inverse(unsigned char *m, unsigned long long *m_len, const unsign
     }
 
     /* Finalise decrypt */
-    int ret = EVP_DecryptFinal_ex(ctx, m + m_length, &len);
+    ret = EVP_DecryptFinal_ex(ctx, m + m_length, &len);
     if (ret < 0) {
         goto done_dem_inverse;
     }

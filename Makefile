@@ -1,5 +1,5 @@
 # Compiler setup
-CC      = gcc
+CC      = g++
 LDLIBS  = -lcrypto -lkeccak -lm
 CFLAGS  = -march=native -mtune=native -O3 -fomit-frame-pointer -fwrapv -DNIST_KAT_GENERATION
 

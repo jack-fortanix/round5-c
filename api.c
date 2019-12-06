@@ -1,32 +1,14 @@
-/*
- * Copyright (c) 2018, Koninklijke Philips N.V.
- */
-
-/**
- * @file
- * Declaration of the encrypt and decrypt functions based on the CCA KEM
- * algorithm (NIST api).
- */
-
-#ifndef _CCA_ENCRYPT_H_
-#define _CCA_ENCRYPT_H_
-
 #include "r5_parameter_sets.h"
-
-/*
- * Conditionally provide the PKE NIST API functions.
- */
-
 #include "r5_cca_pke.h"
 
-    /**
+/**
      * Generates an ENCRYPT key pair.
      *
      * @param[out] pk public key
      * @param[out] sk secret key
      * @return __0__ in case of success
      */
-    inline int crypto_encrypt_keypair(unsigned char *pk, unsigned char *sk) {
+    int crypto_encrypt_keypair(unsigned char *pk, unsigned char *sk) {
         return r5_cca_pke_keygen(pk, sk);
     }
 
@@ -40,7 +22,7 @@
      * @param[in]  pk     the public key to use for the encryption
      * @return __0__ in case of success
      */
-    inline int crypto_encrypt(unsigned char *ct, unsigned long long *ct_len, const unsigned char *m, const unsigned long long m_len, const unsigned char *pk) {
+    int crypto_encrypt(unsigned char *ct, unsigned long long *ct_len, const unsigned char *m, const unsigned long long m_len, const unsigned char *pk) {
         return r5_cca_pke_encrypt(ct, ct_len, m, m_len, pk);
     }
 
@@ -54,8 +36,6 @@
      * @param[in]  sk     the secret key to use for the decryption
      * @return __0__ in case of success
      */
-    inline int crypto_encrypt_open(unsigned char *m, unsigned long long *m_len, const unsigned char *ct, const unsigned long long ct_len, const unsigned char *sk) {
+    int crypto_encrypt_open(unsigned char *m, unsigned long long *m_len, const unsigned char *ct, const unsigned long long ct_len, const unsigned char *sk) {
         return r5_cca_pke_decrypt(m, m_len, ct, ct_len, sk);
     }
-
-#endif /* _CCA_ENCRYPT_H_ */

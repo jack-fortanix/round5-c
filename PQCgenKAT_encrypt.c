@@ -20,8 +20,8 @@
 #define KAT_CRYPTO_FAILURE  -4
 
 int		FindMarker(FILE *infile, const char *marker);
-int		ReadHex(FILE *infile, unsigned char *A, int Length, char *str);
-void	fprintBstr(FILE *fp, char *S, unsigned char *A, unsigned long long L);
+int		ReadHex(FILE *infile, unsigned char *A, int Length, const char *str);
+void	fprintBstr(FILE *fp, const char *S, unsigned char *A, unsigned long long L);
 
 int
 main()
@@ -205,7 +205,7 @@ FindMarker(FILE *infile, const char *marker)
 // ALLOW TO READ HEXADECIMAL ENTRY (KEYS, DATA, TEXT, etc.)
 //
 int
-ReadHex(FILE *infile, unsigned char *A, int Length, char *str)
+ReadHex(FILE *infile, unsigned char *A, int Length, const char *str)
 {
 	int			i, ch, started;
 	unsigned char	ich;
@@ -249,7 +249,7 @@ ReadHex(FILE *infile, unsigned char *A, int Length, char *str)
 }
 
 void
-fprintBstr(FILE *fp, char *S, unsigned char *A, unsigned long long L)
+fprintBstr(FILE *fp, const char *S, unsigned char *A, unsigned long long L)
 {
 	unsigned long long  i;
 

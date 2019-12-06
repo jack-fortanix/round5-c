@@ -20,9 +20,10 @@
 #include <stdint.h>
 
 
-
+extern "C" {
 #include <libkeccak.a.headers/KeccakHash.h>
 #include <libkeccak.a.headers/SP800-185.h>
+}
 
 #ifdef DOXYGEN
 /* Document SHAKE implementation option macro */

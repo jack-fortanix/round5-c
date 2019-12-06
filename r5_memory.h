@@ -34,7 +34,7 @@
      * @param n the number of bytes to copy
      * @param flag indicating whether or not the copy should be performed
      */
-    void conditional_constant_time_memcpy(void * restrict dst, const void * restrict src, size_t n, uint8_t flag);
+    void conditional_constant_time_memcpy(void *  dst, const void *  src, size_t n, uint8_t flag);
 
 
 #endif /* R5_MEMORY_H */
