@@ -5,8 +5,7 @@
 
 #include "r5_cpa_pke.h"
 #include "r5_parameter_sets.h"
-
-#include "r5_hash.h"
+#include "shake.h"
 #include "rng.h"
 #include "ringmul.h"
 #include "io.h"

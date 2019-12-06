@@ -5,8 +5,8 @@
 
 #include "r5_cpa_pke.h"
 #include "r5_parameter_sets.h"
-#include "r5_hash.h"
 #include "rng.h"
+#include "shake.h"
 #include "io.h"
 
 // CCA-KEM KeyGen()
@@ -36,7 +36,8 @@ int r5_cca_kem_encapsulate(uint8_t *ct, uint8_t *k, const uint8_t *pk) {
 
     copy_u8(hash_in, m, PARAMS_KAPPA_BYTES); // G: (l | g | rho) = h(m | pk);
     copy_u8(hash_in + PARAMS_KAPPA_BYTES, pk, PARAMS_PK_SIZE);
-    hash((uint8_t *) L_g_rho, 3 * PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE, PARAMS_KAPPA_BYTES);
+
+    shake256((uint8_t *) L_g_rho, 3 * PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE);
 
 #ifdef NIST_KAT_GENERATION
     print_hex("r5_cca_kem_encapsulate: m", m, PARAMS_KAPPA_BYTES, 1);
@@ -55,7 +56,7 @@ int r5_cca_kem_encapsulate(uint8_t *ct, uint8_t *k, const uint8_t *pk) {
     copy_u8(hash_in, L_g_rho[0], PARAMS_KAPPA_BYTES);
     copy_u8(hash_in + PARAMS_KAPPA_BYTES,
             ct, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
-    hash(k, PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES);
+    shake256(k, PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
 
     return 0;
 }
@@ -86,7 +87,7 @@ int r5_cca_kem_decapsulate(uint8_t *k, const uint8_t *ct, const uint8_t *sk) {
     copy_u8(hash_in, m_prime, PARAMS_KAPPA_BYTES);
     copy_u8(hash_in + PARAMS_KAPPA_BYTES, // (L | g | rho) = h(m | pk)
             sk + PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES, PARAMS_PK_SIZE);
-    hash((uint8_t *) L_g_rho_prime, 3 * PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE, PARAMS_KAPPA_BYTES);
+    shake256((uint8_t *) L_g_rho_prime, 3 * PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_PK_SIZE);
 
 #ifdef NIST_KAT_GENERATION
     print_hex("r5_cca_kem_decapsulate: m_prime", m_prime, PARAMS_KAPPA_BYTES, 1);
@@ -109,7 +110,7 @@ int r5_cca_kem_decapsulate(uint8_t *k, const uint8_t *ct, const uint8_t *sk) {
     conditional_constant_time_memcpy(hash_in, sk + PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES, fail);
 
     copy_u8(hash_in + PARAMS_KAPPA_BYTES, ct_prime, PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
-    hash(k, PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES);
+    shake256(k, PARAMS_KAPPA_BYTES, hash_in, PARAMS_KAPPA_BYTES + PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES);
 
     return 0;
 }

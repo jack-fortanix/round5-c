@@ -9,11 +9,8 @@
 
 #include "r5_dem.h"
 #include "r5_parameter_sets.h"
-
+#include "shake.h"
 #include <openssl/evp.h>
-
-#include "r5_hash.h"
-#include "rng.h"
 
 /*******************************************************************************
  * Public functions
@@ -29,7 +26,7 @@ int round5_dem(uint8_t *c2, size_t *c2_len, const uint8_t *key, const uint8_t *m
     const uint8_t * const iv = final_key_iv + PARAMS_KAPPA_BYTES;
 
     /* Hash key to obtain final key and IV */
-    hash(final_key_iv, (size_t) (PARAMS_KAPPA_BYTES + 12), key, PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES);
+    shake256(final_key_iv, (size_t) (PARAMS_KAPPA_BYTES + 12), key, PARAMS_KAPPA_BYTES);
 
     /* Initialise AES GCM */
     int res = 1;
@@ -105,7 +102,7 @@ int round5_dem_inverse(uint8_t *m, size_t *m_len, const uint8_t *key, const uint
     }
 
     /* Hash key to obtain final key and IV */
-    hash(final_key_iv, (size_t) (PARAMS_KAPPA_BYTES + 12), key, PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES);
+    shake256(final_key_iv, (size_t) (PARAMS_KAPPA_BYTES + 12), key, PARAMS_KAPPA_BYTES);
 
     /* Get tag */
     copy_u8(tag, c2 + c2_len_no_tag, 16);
