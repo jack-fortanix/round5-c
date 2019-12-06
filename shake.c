@@ -39,13 +39,3 @@ void shake256(unsigned char *output, size_t output_len, const unsigned char *inp
         abort();
     }
 }
-
-extern void cshake128_init(cshake_ctx *ctx, const unsigned char *customization, const size_t customization_len);
-extern void cshake128_absorb(cshake_ctx *ctx, const unsigned char *input, const size_t input_len);
-extern void cshake128_squeezeblocks(cshake_ctx *ctx, unsigned char *output, const size_t nr_blocks);
-extern void cshake128(unsigned char *output, size_t output_len, const unsigned char *input, const size_t input_len, const unsigned char *customization, const size_t customization_len);
-
-extern void cshake256_init(cshake_ctx *ctx, const unsigned char *customization, const size_t customization_len);
-extern void cshake256_absorb(cshake_ctx *ctx, const unsigned char *input, const size_t input_len);
-extern void cshake256_squeezeblocks(cshake_ctx *ctx, unsigned char *output, const size_t nr_blocks);
-extern void cshake256(unsigned char *output, size_t output_len, const unsigned char *input, const size_t input_len, const unsigned char *customization, const size_t customization_len);
