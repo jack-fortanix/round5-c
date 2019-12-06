@@ -25,14 +25,13 @@
 // Return value zero (false) indicates the slot was originally empty.
 
 static int probe_cm(uint64_t *v, const uint16_t x) {
-    int i;
     uint64_t a, b, c, y, z;
     // construct the selector
     constant_time_shift_1_left64(y, x & 0x3F, 1); // low bits of index
     constant_time_shift_1_left64(z, x >> 6, 0); // high bits of index
-    
+
     c = 0;
-    for (i = 0; i < PROBEVEC64; i++) { // always scan through all
+    for (size_t i = 0; i < PROBEVEC64; i++) { // always scan through all
         a = v[i];
         b = a | (y & (-(z & 1))); // set bit if not occupied.
         c |= a ^ b; // If change, mask.
