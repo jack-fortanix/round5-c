@@ -10,7 +10,11 @@
      * @return __0__ in case of success
      */
     int crypto_encrypt_keypair(uint8_t *pk, uint8_t *sk) {
-        return r5_cca_pke_keygen(pk, sk);
+    uint8_t coins[3*32];
+    randombytes(coins, 32);
+    randombytes(coins + 32, 32);
+    randombytes(coins + 64, 32);
+    return r5_cca_pke_keygen(pk, sk, coins);
     }
 
     /**

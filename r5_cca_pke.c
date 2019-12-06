@@ -17,8 +17,8 @@
  * Public functions
  ******************************************************************************/
 
-int r5_cca_pke_keygen(uint8_t *pk, uint8_t *sk) {
-    return r5_cca_kem_keygen(pk, sk);
+int r5_cca_pke_keygen(uint8_t *pk, uint8_t *sk, const uint8_t coins[3*32]) {
+return r5_cca_kem_keygen(pk, sk, coins);
 }
 
 int r5_cca_pke_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk, const uint8_t coins[32]) {

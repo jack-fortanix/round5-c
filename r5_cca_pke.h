@@ -20,7 +20,7 @@
      * @param[out] sk     secret key (<b>important:</b> the size of `sk` is `sk_size` + `kappa_bytes` + `pk_size`!)
      * @return __0__ in case of success
      */
-    int r5_cca_pke_keygen(uint8_t *pk, uint8_t *sk);
+int r5_cca_pke_keygen(uint8_t *pk, uint8_t *sk, const uint8_t coins[3*32]);
 
     /**
      * Encrypts a message. Uses the parameters as specified.

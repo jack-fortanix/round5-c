@@ -5,26 +5,21 @@
 
 #include "r5_cpa_pke.h"
 #include "r5_parameter_sets.h"
-#include "rng.h"
 #include "shake.h"
 #include "io.h"
 
 // CCA-KEM KeyGen()
 
-int r5_cca_kem_keygen(uint8_t *pk, uint8_t *sk) {
+int r5_cca_kem_keygen(uint8_t *pk, uint8_t *sk, const uint8_t coins[3*32]) {
     uint8_t y[PARAMS_KAPPA_BYTES];
 
     uint8_t seed[64] = { 0 };
 
-    randombytes(seed, 32);
-    randombytes(seed+32, 32);
-
     /* Generate the base key pair */
-    r5_cpa_pke_keygen(pk, sk, seed);
+    r5_cpa_pke_keygen(pk, sk, coins);
 
     /* Append y and pk to sk */
-    randombytes(y, PARAMS_KAPPA_BYTES);
-    copy_u8(sk + PARAMS_KAPPA_BYTES, y, PARAMS_KAPPA_BYTES);
+    copy_u8(sk + PARAMS_KAPPA_BYTES, &coins[64], PARAMS_KAPPA_BYTES);
     copy_u8(sk + PARAMS_KAPPA_BYTES + PARAMS_KAPPA_BYTES, pk, PARAMS_PK_SIZE);
 
     return 0;

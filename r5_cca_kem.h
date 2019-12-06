@@ -13,7 +13,7 @@
      * @param[out] sk     secret key
      * @return __0__ in case of success
      */
-    int r5_cca_kem_keygen(uint8_t *pk, uint8_t *sk);
+int r5_cca_kem_keygen(uint8_t *pk, uint8_t *sk, const uint8_t coins[3*32]);
 
     /**
      * CCA KEM encapsulate. Uses the parameters as specified.
