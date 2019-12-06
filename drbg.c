@@ -21,11 +21,3 @@
  * Public functions
  ******************************************************************************/
 
-int drbg_sampler16_2_once(uint16_t *x, const size_t xlen, const void *seed) {
-    /* Since without customization, SHAKE == CSHAKE, we use SHAKE here directly. */
-
-shake256((uint8_t *) x, xlen * sizeof (uint16_t), (const uint8_t *) seed, PARAMS_KAPPA_BYTES);
-
-    return 0;
-}
-

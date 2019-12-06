@@ -8,8 +8,8 @@
  */
 
 #include "a_random.h"
-#include "drbg.h"
+#include "shake.h"
 
 void create_A_random(modq_t *A_random, const unsigned char *seed) {
-    drbg_sampler16_2_once(A_random, PARAMS_D * PARAMS_K, seed);
+   shake256((uint8_t *)A_random, (PARAMS_D*PARAMS_K) * sizeof (uint16_t), seed, PARAMS_KAPPA_BYTES);
 }

@@ -71,20 +71,5 @@ typedef struct drbg_ctx {
     x = (uint16_t) LITTLE_ENDIAN16(x); \
 } while (0)
 
-    /**
-     * Generates a sequence of deterministic random numbers using the given seed.
-     * Can only be used to generate a single sequence of random numbers from the
-     * given seed.
-     *
-     * Use this function to generate a fixed number of deterministic numbers
-     * from a seed. It is faster than calling `drbg_init()` and
-     * `drbg16()` separately.
-     *
-     * @param[out] x         destination of the random numbers
-     * @param[in]  xlen      the number of deterministic random numbers to generate
-     * @param[in]  seed      the seed to use for the deterministic number generator
-     * @return __0__ in case of success
-     */
-    int drbg_sampler16_2_once(uint16_t *x, const size_t xlen, const void *seed);
 
 #endif /* DRBG_H */

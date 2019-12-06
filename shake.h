@@ -20,7 +20,6 @@
 
 extern "C" {
 #include <libkeccak.a.headers/KeccakHash.h>
-#include <libkeccak.a.headers/SP800-185.h>
 }
 
 typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
