@@ -2,7 +2,6 @@
 #include "api.h"
 #include "r5_parameter_sets.h"
 #include "r5_cca_pke.h"
-#include "rng.h"
 
 /**
      * Generates an ENCRYPT key pair.
@@ -11,11 +10,7 @@
      * @param[out] sk secret key
      * @return __0__ in case of success
      */
-    int crypto_encrypt_keypair(uint8_t *pk, uint8_t *sk) {
-    uint8_t coins[3*32];
-    randombytes(coins, 32);
-    randombytes(coins + 32, 32);
-    randombytes(coins + 64, 32);
+int crypto_encrypt_keypair(uint8_t *pk, uint8_t *sk, const uint8_t coins[3*32]) {
     return r5_cca_pke_keygen(pk, sk, coins);
     }
 
@@ -29,9 +24,7 @@
      * @param[in]  pk     the public key to use for the encryption
      * @return __0__ in case of success
      */
-    int crypto_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk) {
-    uint8_t coins[32];
-    randombytes(coins, 32);
+int crypto_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk, const uint8_t coins[32]) {
     return r5_cca_pke_encrypt(ct, ct_len, m, m_len, pk, coins);
     }
 

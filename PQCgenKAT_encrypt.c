@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "rng.h"
 #include "api.h"
+#include "utils.h"
 
 #define	MAX_MARKER_LEN		50
 
@@ -22,6 +22,138 @@
 int		FindMarker(FILE *infile, const char *marker);
 int		ReadHex(FILE *infile, uint8_t *A, int Length, const char *str);
 void	fprintBstr(FILE *fp, const char *S, uint8_t *A, size_t L);
+
+#define RNG_SUCCESS      0
+#define RNG_BAD_MAXLEN  -1
+#define RNG_BAD_OUTBUF  -2
+#define RNG_BAD_REQ_LEN -3
+
+typedef struct {
+    uint8_t Key[32];
+    uint8_t V[16];
+    int reseed_counter;
+} AES256_CTR_DRBG_struct;
+
+void
+AES256_CTR_DRBG_Update(uint8_t *provided_data, uint8_t *Key, uint8_t *V);
+
+//
+//  rng.c
+//
+//  Created by Bassham, Lawrence E (Fed) on 8/29/17.
+//  Copyright © 2017 Bassham, Lawrence E (Fed). All rights reserved.
+//
+
+#include <openssl/conf.h>
+#include <openssl/evp.h>
+#include <openssl/err.h>
+
+AES256_CTR_DRBG_struct DRBG_ctx;
+
+static void handleErrors(void) {
+    ERR_print_errors_fp(stderr);
+    abort();
+}
+
+// Use whatever AES implementation you have. This uses AES from openSSL library
+//    key - 256-bit AES key
+//    ctr - a 128-bit plaintext value
+//    buffer - a 128-bit ciphertext value
+
+static void
+AES256_ECB(uint8_t *key, uint8_t *ctr, uint8_t *buffer) {
+    EVP_CIPHER_CTX *ctx;
+
+    int len;
+
+    int ciphertext_len;
+
+    /* Create and initialise the context */
+    if (!(ctx = EVP_CIPHER_CTX_new())) handleErrors();
+
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_ecb(), NULL, key, NULL))
+        handleErrors();
+
+    if (1 != EVP_EncryptUpdate(ctx, buffer, &len, ctr, 16))
+        handleErrors();
+    ciphertext_len = len;
+
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+}
+
+static void
+randombytes_init(uint8_t *entropy_input,
+        uint8_t *personalization_string,
+        int security_strength) {
+    uint8_t seed_material[48];
+
+    copy_u8(seed_material, entropy_input, 48);
+    if (personalization_string)
+        for (int i = 0; i < 48; i++)
+            seed_material[i] ^= personalization_string[i];
+    zero_u8(DRBG_ctx.Key, 32);
+    zero_u8(DRBG_ctx.V, 16);
+    AES256_CTR_DRBG_Update(seed_material, DRBG_ctx.Key, DRBG_ctx.V);
+    DRBG_ctx.reseed_counter = 1;
+}
+
+static int
+randombytes(uint8_t *x, size_t xlen) {
+    uint8_t block[16];
+    int i = 0;
+
+    while (xlen > 0) {
+        //increment V
+        for (int j = 15; j >= 0; j--) {
+            if (DRBG_ctx.V[j] == 0xff)
+                DRBG_ctx.V[j] = 0x00;
+            else {
+                DRBG_ctx.V[j]++;
+                break;
+            }
+        }
+        AES256_ECB(DRBG_ctx.Key, DRBG_ctx.V, block);
+        if (xlen > 15) {
+            copy_u8(x + i, block, 16);
+            i += 16;
+            xlen -= 16;
+        } else {
+            copy_u8(x + i, block, xlen);
+            xlen = 0;
+        }
+    }
+    AES256_CTR_DRBG_Update(NULL, DRBG_ctx.Key, DRBG_ctx.V);
+    DRBG_ctx.reseed_counter++;
+
+    return RNG_SUCCESS;
+}
+
+void
+AES256_CTR_DRBG_Update(uint8_t *provided_data,
+        uint8_t *Key,
+        uint8_t *V) {
+    uint8_t temp[48];
+
+    for (int i = 0; i < 3; i++) {
+        //increment V
+        for (int j = 15; j >= 0; j--) {
+            if (V[j] == 0xff)
+                V[j] = 0x00;
+            else {
+                V[j]++;
+                break;
+            }
+        }
+
+        AES256_ECB(Key, V, temp + 16 * i);
+    }
+    if (provided_data != NULL)
+        for (int i = 0; i < 48; i++)
+            temp[i] ^= provided_data[i];
+    copy_u8(Key, temp, 32);
+    copy_u8(V, temp + 32, 16);
+}
 
 int
 main()
@@ -113,16 +245,23 @@ main()
             return KAT_DATA_ERROR;
         }
         fprintBstr(fp_rsp, "msg = ", m, mlen);
+
+        uint8_t keygen_coins[3*32];
+        randombytes(keygen_coins, 32);
+        randombytes(keygen_coins+32, 32);
+        randombytes(keygen_coins+64, 32);
         
         // Generate the public/private keypair
-        if ( (ret_val = crypto_encrypt_keypair(pk, sk)) != 0) {
+        if ( (ret_val = crypto_encrypt_keypair(pk, sk, keygen_coins)) != 0) {
             printf("crypto_encrypt_keypair returned <%d>\n", ret_val);
             return KAT_CRYPTO_FAILURE;
         }
         fprintBstr(fp_rsp, "pk = ", pk, CRYPTO_PUBLICKEYBYTES);
         fprintBstr(fp_rsp, "sk = ", sk, CRYPTO_SECRETKEYBYTES);
-        
-        if ( (ret_val = crypto_encrypt(c, &clen, m, mlen, pk)) != 0) {
+
+        uint8_t enc_coins[32];
+        randombytes(enc_coins, 32);
+        if ( (ret_val = crypto_encrypt(c, &clen, m, mlen, pk, enc_coins)) != 0) {
             printf("crypto_encrypt returned <%d>\n", ret_val);
             return KAT_CRYPTO_FAILURE;
         }

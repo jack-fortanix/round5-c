@@ -22,7 +22,7 @@
      * @param[out] sk secret key
      * @return __0__ in case of success
      */
-    int crypto_encrypt_keypair(uint8_t *pk, uint8_t *sk);
+int crypto_encrypt_keypair(uint8_t *pk, uint8_t *sk, const uint8_t coins[3*32]);
 
     /**
      * Encrypts a message.
@@ -34,7 +34,7 @@
      * @param[in]  pk     the public key to use for the encryption
      * @return __0__ in case of success
      */
-    int crypto_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk);
+int crypto_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk, const uint8_t coins[32]);
 
     /**
      * Decrypts a message.
