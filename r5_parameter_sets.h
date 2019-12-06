@@ -6,7 +6,7 @@
 #ifndef _R5_PARAMETER_SETS_H_
 #define _R5_PARAMETER_SETS_H_
 
-#include <stdint.h>
+#include "types.h"
 #include <stddef.h>
 #include "utils.h"
 

@@ -2,7 +2,7 @@
 #define UTILS_H
 
 #include <stdlib.h>
-#include <stdint.h>
+#include "types.h"
 
 /**
  * Macro to round a floating point value to an integer value.

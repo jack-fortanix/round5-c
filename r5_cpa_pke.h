@@ -6,7 +6,7 @@
 #ifndef _R5_CPA_PKE_H_
 #define _R5_CPA_PKE_H_
 
-#include <stdint.h>
+#include "types.h"
 
 int r5_cpa_pke_keygen(uint8_t *pk, uint8_t *sk);
 

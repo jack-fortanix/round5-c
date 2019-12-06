@@ -23,16 +23,16 @@
  * Public functions
  ******************************************************************************/
 
-int r5_cca_pke_keygen(unsigned char *pk, unsigned char *sk) {
+int r5_cca_pke_keygen(uint8_t *pk, uint8_t *sk) {
     return r5_cca_kem_keygen(pk, sk);
 }
 
-int r5_cca_pke_encrypt(unsigned char *ct, unsigned long long *ct_len, const unsigned char *m, const unsigned long long m_len, const unsigned char *pk) {
+int r5_cca_pke_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk) {
     int result = -1;
-    const unsigned long long c1_len = PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES;
-    unsigned char c1[PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES];
-    unsigned long long c2_len;
-    unsigned char k[PARAMS_KAPPA_BYTES];
+    const size_t c1_len = PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES;
+    uint8_t c1[PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES];
+    size_t c2_len;
+    uint8_t k[PARAMS_KAPPA_BYTES];
 
     /* Determine c1 and k */
     r5_cca_kem_encapsulate(c1, k, pk);
@@ -55,13 +55,13 @@ done_encrypt:
     return result;
 }
 
-int r5_cca_pke_decrypt(unsigned char *m, unsigned long long *m_len, const unsigned char *ct, unsigned long long ct_len, const unsigned char *sk) {
+int r5_cca_pke_decrypt(uint8_t *m, size_t *m_len, const uint8_t *ct, size_t ct_len, const uint8_t *sk) {
     int result = -1;
-    unsigned char k[PARAMS_KAPPA_BYTES];
-    const unsigned char * const c1 = ct;
-    const unsigned long long c1_len = PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES;
-    const unsigned char * const c2 = ct + c1_len;
-    const unsigned long c2_len = ct_len - c1_len;
+    uint8_t k[PARAMS_KAPPA_BYTES];
+    const uint8_t * const c1 = ct;
+    const size_t c1_len = PARAMS_CT_SIZE + PARAMS_KAPPA_BYTES;
+    const uint8_t * const c2 = ct + c1_len;
+    const size_t c2_len = ct_len - c1_len;
 
     /* Check length, should be at least c1_len + 16 (for the DEM tag) */
     if (ct_len < (c1_len + 16U)) {

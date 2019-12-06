@@ -15,7 +15,7 @@
 
 #include <stdlib.h>
 #include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 
 extern "C" {
@@ -47,7 +47,7 @@ typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
      * @param input the input absorbed into the state
      * @param input_len the length of the input
      */
-    inline void shake256_absorb(shake_ctx *ctx, const unsigned char *input, const size_t input_len) {
+    inline void shake256_absorb(shake_ctx *ctx, const uint8_t *input, const size_t input_len) {
         if (Keccak_HashUpdate(ctx, input, input_len * 8) != 0) {
             abort();
         }
@@ -65,7 +65,7 @@ typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
      * @param output the output
      * @param nr_blocks the number of blocks to squeeze
      */
-    inline void shake256_squeezeblocks(shake_ctx *ctx, unsigned char *output, const size_t nr_blocks) {
+    inline void shake256_squeezeblocks(shake_ctx *ctx, uint8_t *output, const size_t nr_blocks) {
         if (Keccak_HashSqueeze(ctx, output, nr_blocks * SHAKE256_RATE * 8) != 0) {
             abort();
         }
@@ -78,6 +78,6 @@ typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
      * @param input the input
      * @param input_len the length of the input
      */
-    void shake256(unsigned char *output, const size_t output_len, const unsigned char *input, const size_t input_len);
+    void shake256(uint8_t *output, const size_t output_len, const uint8_t *input, const size_t input_len);
 
 #endif /* SHAKE_H */

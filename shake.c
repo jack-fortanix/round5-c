@@ -15,10 +15,10 @@
  ******************************************************************************/
 
 extern void shake256_init(shake_ctx *ctx);
-extern void shake256_absorb(shake_ctx *ctx, const unsigned char *input, const size_t input_len);
-extern void shake256_squeezeblocks(shake_ctx *ctx, unsigned char *output, const size_t nr_blocks);
+extern void shake256_absorb(shake_ctx *ctx, const uint8_t *input, const size_t input_len);
+extern void shake256_squeezeblocks(shake_ctx *ctx, uint8_t *output, const size_t nr_blocks);
 
-void shake256(unsigned char *output, size_t output_len, const unsigned char *input, const size_t input_len) {
+void shake256(uint8_t *output, size_t output_len, const uint8_t *input, const size_t input_len) {
     shake_ctx ctx;
     shake256_init(&ctx);
     shake256_absorb(&ctx, input, input_len);

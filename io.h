@@ -11,7 +11,7 @@
 #define MISC_H
 
 #include <stdlib.h>
-#include <stdint.h>
+#include "types.h"
 
 /** Macro for printing errors. */
 
@@ -24,7 +24,7 @@
      * @param[in] nr_elements  the number of elements in the data
      * @param[in] element_size the size of the elements in bytes (bytes will be reversed inside element)
      */
-    void print_hex(const char *var, const unsigned char *data, const size_t nr_elements, const size_t element_size);
+    void print_hex(const char *var, const uint8_t *data, const size_t nr_elements, const size_t element_size);
 
     /**
      * Prints the given vector in a format usable within sage.

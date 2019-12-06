@@ -10,10 +10,6 @@
 #include "r5_dem.h"
 #include "r5_parameter_sets.h"
 
-#include <assert.h>
-
-
-
 #include <openssl/evp.h>
 
 #include "r5_hash.h"
@@ -23,17 +19,16 @@
  * Public functions
  ******************************************************************************/
 
-int round5_dem(unsigned char *c2, unsigned long long *c2_len, const unsigned char *key, const unsigned char *m, const unsigned long long m_len) {
+int round5_dem(uint8_t *c2, size_t *c2_len, const uint8_t *key, const uint8_t *m, const size_t m_len) {
     int result = 1;
     int len;
     int c2length;
     EVP_CIPHER_CTX *ctx = NULL;
-    unsigned char final_key_iv[32 + 12];
-    unsigned char tag[16];
-    const unsigned char * const iv = final_key_iv + PARAMS_KAPPA_BYTES;
+    uint8_t final_key_iv[32 + 12];
+    uint8_t tag[16];
+    const uint8_t * const iv = final_key_iv + PARAMS_KAPPA_BYTES;
 
     /* Hash key to obtain final key and IV */
-    assert(PARAMS_KAPPA_BYTES == 32 || PARAMS_KAPPA_BYTES == 24 || PARAMS_KAPPA_BYTES == 16);
     hash(final_key_iv, (size_t) (PARAMS_KAPPA_BYTES + 12), key, PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES);
 
     /* Initialise AES GCM */
@@ -76,7 +71,7 @@ int round5_dem(unsigned char *c2, unsigned long long *c2_len, const unsigned cha
     c2length += 16;
 
     /* Set total length */
-    *c2_len = (unsigned long long) c2length;
+    *c2_len = (size_t) c2length;
 
     /* All OK */
     result = 0;
@@ -87,17 +82,17 @@ done_dem:
     return result;
 }
 
-int round5_dem_inverse(unsigned char *m, unsigned long long *m_len, const unsigned char *key, const unsigned char *c2, const unsigned long long c2_len) {
+int round5_dem_inverse(uint8_t *m, size_t *m_len, const uint8_t *key, const uint8_t *c2, const size_t c2_len) {
     int result = 1;
     int len;
     int m_length;
     EVP_CIPHER_CTX *ctx = NULL;
-    unsigned char final_key_iv[32 + 12];
-    unsigned char tag[16];
-    const unsigned long long c2_len_no_tag = c2_len - 16U;
-    const unsigned char * const iv = final_key_iv + PARAMS_KAPPA_BYTES;
+    uint8_t final_key_iv[32 + 12];
+    uint8_t tag[16];
+    const size_t c2_len_no_tag = c2_len - 16U;
+    const uint8_t * const iv = final_key_iv + PARAMS_KAPPA_BYTES;
     int ret;
-    unsigned char * tmp_m;
+    uint8_t * tmp_m;
     ptrdiff_t diff;
     int res = 1;
 
@@ -110,7 +105,6 @@ int round5_dem_inverse(unsigned char *m, unsigned long long *m_len, const unsign
     }
 
     /* Hash key to obtain final key and IV */
-    assert(PARAMS_KAPPA_BYTES == 32 || PARAMS_KAPPA_BYTES == 24 || PARAMS_KAPPA_BYTES == 16);
     hash(final_key_iv, (size_t) (PARAMS_KAPPA_BYTES + 12), key, PARAMS_KAPPA_BYTES, PARAMS_KAPPA_BYTES);
 
     /* Get tag */
@@ -163,7 +157,7 @@ int round5_dem_inverse(unsigned char *m, unsigned long long *m_len, const unsign
     }
 
     /* Set decrypted message length */
-    *m_len = (unsigned long long) m_length;
+    *m_len = (size_t) m_length;
 
     /* OK */
     result = 0;

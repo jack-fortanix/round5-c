@@ -14,7 +14,7 @@
 #include <stdio.h>
 
 // Creates A random for the given seed and algorithm parameters.
-static void create_A_random(modq_t *A_random, const unsigned char *seed) {
+static void create_A_random(modq_t *A_random, const uint8_t *seed) {
    shake256((uint8_t *)A_random, (PARAMS_D*PARAMS_K) * sizeof (uint16_t), seed, PARAMS_KAPPA_BYTES);
 }
 

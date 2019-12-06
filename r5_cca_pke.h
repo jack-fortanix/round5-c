@@ -11,6 +11,8 @@
 #ifndef _R5_CCA_PKE_H_
 #define _R5_CCA_PKE_H_
 
+#include "types.h"
+
     /**
      * Generates an ENCRYPT key pair. Uses the parameters as specified.
      *
@@ -18,7 +20,7 @@
      * @param[out] sk     secret key (<b>important:</b> the size of `sk` is `sk_size` + `kappa_bytes` + `pk_size`!)
      * @return __0__ in case of success
      */
-    int r5_cca_pke_keygen(unsigned char *pk, unsigned char *sk);
+    int r5_cca_pke_keygen(uint8_t *pk, uint8_t *sk);
 
     /**
      * Encrypts a message. Uses the parameters as specified.
@@ -30,7 +32,7 @@
      * @param[in]  pk     the public key to use for the encryption
      * @return __0__ in case of success
      */
-    int r5_cca_pke_encrypt(unsigned char *ct, unsigned long long *ct_len, const unsigned char *m, const unsigned long long m_len, const unsigned char *pk);
+    int r5_cca_pke_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk);
 
     /**
      * Decrypts a message. Uses the parameters as specified.
@@ -42,6 +44,6 @@
      * @param[in]  sk      the secret key to use for the decryption
      * @return __0__ in case of success
      */
-    int r5_cca_pke_decrypt(unsigned char *m, unsigned long long *m_len, const unsigned char *ct, const unsigned long long ct_len, const unsigned char *sk);
+    int r5_cca_pke_decrypt(uint8_t *m, size_t *m_len, const uint8_t *ct, const size_t ct_len, const uint8_t *sk);
 
 #endif /* _R5_CCA_PKE_H_ */

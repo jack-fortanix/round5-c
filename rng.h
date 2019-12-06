@@ -10,6 +10,8 @@
 #ifndef RNG_H
 #define RNG_H
 
+#include "types.h"
+
     /**
      * Initializes the random number generator used for generating the random
      * bytes.
@@ -18,7 +20,7 @@
      * @param[in] personalization_string an optional personalization string (48 bytes)
      * @param[in] security_strength parameter to specify the security strength of the random bytes
      */
-    void randombytes_init(unsigned char *entropy_input, unsigned char *personalization_string, int security_strength);
+    void randombytes_init(uint8_t *entropy_input, uint8_t *personalization_string, int security_strength);
 
     /**
      * Generates a sequence of random bytes.
@@ -27,7 +29,7 @@
      * @param[in] xlen the number of random bytes
      * @return _0_ in case of success, non-zero otherwise
      */
-    int randombytes(unsigned char *x, unsigned long long xlen);
+    int randombytes(uint8_t *x, size_t xlen);
 
 
 #endif /* RNG_H */

@@ -10,7 +10,7 @@
 #ifndef PST_DEM_H
 #define PST_DEM_H
 
-#include <stdint.h>
+#include "types.h"
 
     /**
      * Applies a DEM to the given message using the specified key.
@@ -22,7 +22,7 @@
      * @param[in]  m_len  the length of the message
      * @return __0__ in case of success
      */
-    int round5_dem(unsigned char *c2, unsigned long long *c2_len, const unsigned char *key, const unsigned char *m, const unsigned long long m_len);
+    int round5_dem(uint8_t *c2, size_t *c2_len, const uint8_t *key, const uint8_t *m, const size_t m_len);
 
     /**
      * Inverses the application of a DEM to a message.
@@ -34,6 +34,6 @@
      * @param[in]  c2_len  the length of the encapsulated message
      * @return __0__ in case of success
      */
-    int round5_dem_inverse(unsigned char *m, unsigned long long *m_len, const unsigned char *key, const unsigned char *c2, const unsigned long long c2_len);
+    int round5_dem_inverse(uint8_t *m, size_t *m_len, const uint8_t *key, const uint8_t *c2, const size_t c2_len);
 
 #endif /* PST_DEM_H */

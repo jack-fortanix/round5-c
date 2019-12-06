@@ -25,7 +25,7 @@
      * @param[out] sk secret key
      * @return __0__ in case of success
      */
-    int crypto_encrypt_keypair(unsigned char *pk, unsigned char *sk);
+    int crypto_encrypt_keypair(uint8_t *pk, uint8_t *sk);
 
     /**
      * Encrypts a message.
@@ -37,7 +37,7 @@
      * @param[in]  pk     the public key to use for the encryption
      * @return __0__ in case of success
      */
-    int crypto_encrypt(unsigned char *ct, unsigned long long *ct_len, const unsigned char *m, const unsigned long long m_len, const unsigned char *pk);
+    int crypto_encrypt(uint8_t *ct, size_t *ct_len, const uint8_t *m, const size_t m_len, const uint8_t *pk);
 
     /**
      * Decrypts a message.
@@ -49,6 +49,6 @@
      * @param[in]  sk     the secret key to use for the decryption
      * @return __0__ in case of success
      */
-    int crypto_encrypt_open(unsigned char *m, unsigned long long *m_len, const unsigned char *ct, const unsigned long long ct_len, const unsigned char *sk);
+    int crypto_encrypt_open(uint8_t *m, size_t *m_len, const uint8_t *ct, const size_t ct_len, const uint8_t *sk);
 
 #endif /* _API_H_ */
