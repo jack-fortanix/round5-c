@@ -9,11 +9,14 @@
 #include "r5_hash.h"
 #include "rng.h"
 #include "ringmul.h"
-#include "a_random.h"
 #include "io.h"
 
 #include <stdio.h>
 
+// Creates A random for the given seed and algorithm parameters.
+static void create_A_random(modq_t *A_random, const unsigned char *seed) {
+   shake256((uint8_t *)A_random, (PARAMS_D*PARAMS_K) * sizeof (uint16_t), seed, PARAMS_KAPPA_BYTES);
+}
 
 // compress ND elements of q bits into p bits and pack into a byte string
 
