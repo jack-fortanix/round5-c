@@ -24,11 +24,7 @@
 int drbg_sampler16_2_once(uint16_t *x, const size_t xlen, const void *seed) {
     /* Since without customization, SHAKE == CSHAKE, we use SHAKE here directly. */
 
-    if (PARAMS_KAPPA_BYTES > 16) {
-        shake256((uint8_t *) x, xlen * sizeof (uint16_t), (const uint8_t *) seed, PARAMS_KAPPA_BYTES);
-    } else {
-        shake128((uint8_t *) x, xlen * sizeof (uint16_t), (const uint8_t *) seed, PARAMS_KAPPA_BYTES);
-    }
+shake256((uint8_t *) x, xlen * sizeof (uint16_t), (const uint8_t *) seed, PARAMS_KAPPA_BYTES);
 
     return 0;
 }

@@ -24,7 +24,7 @@
 typedef struct drbg_ctx {
 
    shake_ctx shake; /**< Context in case of a SHAKE generator */
-    uint8_t output[SHAKE128_RATE > SHAKE256_RATE ? SHAKE128_RATE : SHAKE256_RATE]; /**< Buffer for output. */
+    uint8_t output[SHAKE256_RATE]; /**< Buffer for output. */
     size_t index; /**< Current index in buffer. */
 } drbg_ctx;
 

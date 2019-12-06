@@ -25,11 +25,7 @@
      */
     inline void hash(uint8_t *output, const size_t output_len, const uint8_t *input, const size_t input_len, const uint8_t kappa_bytes) {
         /* Since without customization, SHAKE == CSHAKE, we can use SHAKE here directly. */
-        if (kappa_bytes > 16) {
             shake256(output, output_len, input, input_len);
-        } else {
-            shake128(output, output_len, input, input_len);
-        }
     }
 
 #endif /* R5_HASH_H */

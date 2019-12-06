@@ -26,65 +26,9 @@ extern "C" {
 typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
 
 /**
- * The rate of the SHAKE-128 algorithm (i.e. internal block size, in bytes).
- */
-#define SHAKE128_RATE 168
-
-/**
  * The rate of the SHAKE-256 algorithm (i.e. internal block size, in bytes).
  */
 #define SHAKE256_RATE 136
-
-    /**
-     * Performs the initialisation step of the SHAKE-128 XOF.
-     *
-     * @param ctx the shake context
-     */
-    inline void shake128_init(shake_ctx *ctx) {
-        if (Keccak_HashInitialize_SHAKE128(ctx) != 0) {
-            abort();
-        }
-    }
-
-    /**
-     * Performs the absorb step of the SHAKE-128 XOF.
-     *
-     * @param ctx the shake context
-     * @param input the input absorbed into the state
-     * @param input_len the length of the input
-     */
-    inline void shake128_absorb(shake_ctx *ctx, const unsigned char *input, const size_t input_len) {
-        if (Keccak_HashUpdate(ctx, input, input_len * 8) != 0) {
-            abort();
-        }
-        if (Keccak_HashFinal(ctx, NULL) != 0) {
-            abort();
-        }
-    }
-
-    /**
-     * Performs the squeeze step of the SHAKE-128 XOF. Squeezes full blocks of
-     * SHAKE128_RATE bytes each. Can be called multiple times to keep squeezing
-     * (i.e. this function is incremental).
-     *
-     * @param ctx the shake context
-     * @param output the output
-     * @param nr_blocks the number of blocks to squeeze
-     */
-    inline void shake128_squeezeblocks(shake_ctx *ctx, unsigned char *output, const size_t nr_blocks) {
-        if (Keccak_HashSqueeze(ctx, output, nr_blocks * SHAKE128_RATE * 8) != 0) {
-            abort();
-        }
-    }
-
-    /**
-     * Performs the full SHAKE-128 XOF to the given input.
-     * @param output the final output
-     * @param output_len the length of the output
-     * @param input the input
-     * @param input_len the length of the input
-     */
-    void shake128(unsigned char *output, size_t output_len, const unsigned char *input, const size_t input_len);
 
     /**
      * Performs the initialisation step of the SHAKE-256 XOF.
