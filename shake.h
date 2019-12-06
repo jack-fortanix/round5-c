@@ -78,6 +78,13 @@ typedef Keccak_HashInstance shake_ctx; /**< The shake context (state) */
      * @param input the input
      * @param input_len the length of the input
      */
-    void shake256(uint8_t *output, const size_t output_len, const uint8_t *input, const size_t input_len);
+    inline void shake256(uint8_t *output, size_t output_len, const uint8_t *input, const size_t input_len) {
+    shake_ctx ctx;
+    shake256_init(&ctx);
+    shake256_absorb(&ctx, input, input_len);
+    if (Keccak_HashSqueeze(&ctx, output, output_len * 8) != 0) {
+        abort();
+    }
+}
 
 #endif /* SHAKE_H */
