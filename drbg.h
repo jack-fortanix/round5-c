@@ -18,49 +18,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#ifdef DOXYGEN
-/* Document DRBG implementation option */
-/**
- * The default implementation of the DRBG uses (c)SHAKE for the generation of
- * the deterministic random bytes. To make use of the alternative AES (in CTR
- * mode on zero input blocks) implementation, define `USE_AES_DRBG`.
- * Especially on platforms with good hardware accelerated AES instructions, this
- * can be an advantage.
- */
-#define USE_AES_DRBG
-#undef USE_AES_DRBG
-#endif
-
-#ifdef USE_AES_DRBG
-
-#include "r5_memory.h"
-#include <assert.h>
-#include <openssl/opensslv.h>
-#include <openssl/evp.h>
-
-
-/**
- * The DRBG context data structure.
- */
-typedef struct {
-    EVP_CIPHER_CTX *aes_ctx; /**< The AES cipher context */
-    uint8_t input[16]; /**< Input block (always 0). */
-    uint8_t output[16]; /**< Buffer for output. */
-    size_t index; /**< Current index in buffer. */
-} drbg_ctx;
-
-/**
- * Macro to initialize the AES DRBG context
- * @param ctx the DRBG context
- */
-#define AES_INIT(ctx) \
-    if (!(ctx.aes_ctx = EVP_CIPHER_CTX_new())) { \
-        abort(); \
-    } \
-    do { } while (0)
-
-#else
-
 /**
  * The DRBG context data structure.
  */
@@ -74,42 +31,11 @@ typedef struct drbg_ctx {
     size_t index; /**< Current index in buffer. */
 } drbg_ctx;
 
-#endif
-
 /**
  * Initializes the deterministic random number generator.
  *
  * @param[in] seed      the seed to use for the deterministic number generator
  */
-#ifdef USE_AES_DRBG
-#define drbg_init(seed) \
-    uint8_t key[32]; \
-    drbg_ctx ctx = {NULL, {0}, {0}, 0}; \
-    AES_INIT(ctx); \
-    int res; \
-    assert(PARAMS_KAPPA_BYTES == 16 || PARAMS_KAPPA_BYTES == 24 || PARAMS_KAPPA_BYTES == 32); \
-    hash(key, PARAMS_KAPPA_BYTES, seed, PARAMS_KAPPA_BYTES, (uint8_t) PARAMS_KAPPA_BYTES); \
-    switch (PARAMS_KAPPA_BYTES) { \
-        case 16: \
-            shake128(key, PARAMS_KAPPA_BYTES, seed, PARAMS_KAPPA_BYTES); \
-            res = EVP_EncryptInit_ex(ctx.aes_ctx, EVP_aes_128_ctr(), NULL, key, NULL); \
-            break; \
-        case 24: \
-            shake256(key, PARAMS_KAPPA_BYTES, seed, PARAMS_KAPPA_BYTES); \
-            res = EVP_EncryptInit_ex(ctx.aes_ctx, EVP_aes_192_ctr(), NULL, key, NULL); \
-            break; \
-        case 32: \
-            shake256(key, PARAMS_KAPPA_BYTES, seed, PARAMS_KAPPA_BYTES); \
-            res = EVP_EncryptInit_ex(ctx.aes_ctx, EVP_aes_256_ctr(), NULL, key, NULL); \
-            break; \
-    } \
-    if (res != 1) { \
-        abort(); \
-    } \
-    ctx.index = 16
-
-#else
-
 #if PARAMS_KAPPA_BYTES > 16
 #define drbg_init(seed) \
     drbg_ctx ctx; \
@@ -126,8 +52,6 @@ typedef struct drbg_ctx {
 
 #endif
 
-#endif
-
 /**
  * Initializes the deterministic random number generator with the specified
  * customization string.
@@ -136,32 +60,6 @@ typedef struct drbg_ctx {
  * @param[in] customization     the customization string to use
  * @param[in] customization_len the length of the customization string
  */
-#ifdef USE_AES_DRBG
-#define drbg_init_customization(seed, customization, customization_len) \
-    uint8_t key[32]; \
-    drbg_ctx ctx = {NULL, {0}, {0}, 0}; \
-    AES_INIT(ctx); \
-    int res; \
-    assert(PARAMS_KAPPA_BYTES == 16 || PARAMS_KAPPA_BYTES == 24 || PARAMS_KAPPA_BYTES == 32); \
-    hash_customization(key, PARAMS_KAPPA_BYTES, seed, PARAMS_KAPPA_BYTES, customization, customization_len, (uint8_t) PARAMS_KAPPA_BYTES); \
-    switch (PARAMS_KAPPA_BYTES) { \
-        case 16: \
-            res = EVP_EncryptInit_ex(ctx.aes_ctx, EVP_aes_128_ctr(), NULL, key, NULL); \
-            break; \
-        case 24: \
-            res = EVP_EncryptInit_ex(ctx.aes_ctx, EVP_aes_192_ctr(), NULL, key, NULL); \
-            break; \
-        case 32: \
-            res = EVP_EncryptInit_ex(ctx.aes_ctx, EVP_aes_256_ctr(), NULL, key, NULL); \
-            break; \
-    } \
-    if (res != 1) { \
-        abort(); \
-    } \
-    ctx.index = 16
-
-#else
-
 #if PARAMS_KAPPA_BYTES > 16
 #define drbg_init_customization(seed, customization, customization_len) \
     drbg_ctx ctx; \
@@ -178,8 +76,6 @@ typedef struct drbg_ctx {
 
 #endif
 
-#endif
-
 /**
  * Generates the next sequence of deterministic random bytes using the
  * (initial) seed as set with `drbg_init()`.
@@ -187,23 +83,7 @@ typedef struct drbg_ctx {
  * @param[out] x    destination buffer for the random bytes
  * @param[in]  xlen the number of deterministic random bytes to generate
  */
-#ifdef USE_AES_DRBG
-#define drbg(x, xlen) do { \
-    size_t i, j; \
-    i = ctx.index; \
-    for (j = 0; j < xlen; j++) { \
-        if (i >= 16) { \
-            int len; \
-            if (EVP_EncryptUpdate(ctx.aes_ctx, ctx.output, &len, ctx.input, 16) != 1) { \
-                abort(); \
-            } \
-            i = 0; \
-        } \
-        ((uint8_t *) x)[j] = ctx.output[i++]; \
-    } \
-    ctx.index = i; \
-} while (0)
-#else
+
 #if PARAMS_KAPPA_BYTES > 16
 #define drbg(x, xlen) do { \
     size_t i, j; \
@@ -231,7 +111,6 @@ typedef struct drbg_ctx {
     ctx.index = i; \
 } while (0)
 #endif
-#endif
 
 /**
  * Generates the next deterministic random 16-bit integer using the
@@ -252,23 +131,6 @@ typedef struct drbg_ctx {
  * @param[in]  xlen the number of deterministic random bytes to generate
  * @return __0__ in case of success
  */
-#ifdef USE_AES_DRBG
-#define drbg_customization(x, xlen) do { \
-    size_t i, j; \
-    i = ctx.index; \
-    for (j = 0; j < xlen; j++) { \
-        if (i >= 16) { \
-            int len; \
-            if (EVP_EncryptUpdate(ctx.aes_ctx, ctx.output, &len, ctx.input, 16) != 1) { \
-                abort(); \
-            } \
-            i = 0; \
-        } \
-        ((uint8_t *) x)[j] = ctx.output[i++]; \
-    } \
-    ctx.index = i; \
-} while (0)
-#else
 #if PARAMS_KAPPA_BYTES > 16
 #define drbg_customization(x, xlen) do { \
     size_t i, j; \
@@ -295,7 +157,6 @@ typedef struct drbg_ctx {
     } \
     ctx.index = i; \
 } while (0)
-#endif
 #endif
 
 /**
